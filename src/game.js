@@ -23,35 +23,34 @@ var Game = function(){
     this.mapTestScene = new MapTestScene({game: this});
     this.testScene = new TestScene({game: this});
 
+    function getURLParam(name) {
+        name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+        var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+            results = regex.exec(location.search);
+        return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+    }
+
+    this.goScene = this[getURLParam('scene') + 'Scene'] || this.testScene;
+
 };
 
 Game.prototype = Object.create(Phaser.Game.prototype);
 
 Game.prototype.onPreload = function(){
-
-    //this.logoScene.onPreload();
+    Assets.preload(this);
+    if('onPreload' in this.goScene) this.goScene.onPreload();
 };
 
 Game.prototype.onCreate = function(){
-    /*this.logoScene.onCreate();
 
-    var game = this;
-    setTimeout(function(){
-        game.logoScene.onDestroy();
-    }, 5000);*/
-    this.mapTestScene.onCreate();
+    if('onCreate' in this.goScene) this.goScene.onCreate();
 };
 
 Game.prototype.onUpdate = function(step){
     //this.logoScene.onUpdate();
 
-    Assets.preload(this);
-    this.testScene.onPreload();
-};
 
-Game.prototype.onCreate = function(){
-    this.mapTestScene.onCreate();
-    //this.testScene.onCreate();
+    if('onUpdate' in this.goScene) this.goScene.onUpdate();
 };
 
 module.exports = Game;
