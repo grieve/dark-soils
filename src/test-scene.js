@@ -25,21 +25,21 @@ TestScene.prototype.onCreate = function(){
         this.tilemap.map.width * this.tilemap.map.tileWidth / 2,
         this.tilemap.map.height * this.tilemap.map.tileHeight / 2
     );
-    this.game.add.existing(this.player.sprite);
+    this.game.add.existing(this.player);
 
     this.enemy = new Enemy(this.game);
     this.enemy.setPosition(
-        this.player.sprite.x + (Math.random() * this.game.width) - this.game.width/2,
-        this.player.sprite.y + (Math.random() * this.game.height) - this.game.height/2
+        this.player.x + (Math.random() * this.game.width) - this.game.width/2,
+        this.player.y + (Math.random() * this.game.height) - this.game.height/2
     );
-    this.enemy.setTarget(this.player.sprite);
-    this.game.add.existing(this.enemy.sprite);
+    this.enemy.setTarget(this.player);
+    this.game.add.existing(this.enemy);
 
-    this.game.camera.focusOn(this.player.sprite);
-    this.game.camera.follow(this.player.sprite, Phaser.Camera.FOLLOW_TOPDOWN);
+    this.game.camera.focusOn(this.player);
+    this.game.camera.follow(this.player, Phaser.Camera.FOLLOW_TOPDOWN);
 
-    this.sprites.push(this.player.sprite);
-    this.sprites.push(this.enemy.sprite);
+    this.sprites.push(this.player);
+    this.sprites.push(this.enemy);
 };
 
 TestScene.prototype.onUpdate = function(){
@@ -47,7 +47,7 @@ TestScene.prototype.onUpdate = function(){
     this.enemy.update();
     this.resolveZ();
     
-    if(this.enemy.sprite.overlap(this.player.sprite)){
+    if(this.enemy.overlap(this.player)){
         this.onPlayerCaught();
     }
 };

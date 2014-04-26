@@ -1,16 +1,18 @@
 var Phaser = require('phaser');
 
 var Enemy = function(game){
-    this.sprite = new Phaser.Sprite(game, 0, 0, 'enemy', 0);
-    this.scale = 0.6;
-    this.sprite.scale.x = this.sprite.scale.y = this.scale;
-    this.sprite.anchor.setTo(0.5, 0.5);
+    Phaser.Sprite.call(this, game, 0, 0, 'enemy', 0);
+    this.scale.x = this.scale.y = this.baseScale = 0.6;
+    this.anchor.setTo(0.5, 0.5);
     this.speed = 3;
 };
 
+Enemy.prototype = Object.create(Phaser.Sprite.prototype);
+Enemy.prototype.constructor = Enemy;
+
 Enemy.prototype.setPosition = function(x, y){
-    this.sprite.x = x;
-    this.sprite.y = y;
+    this.x = x;
+    this.y = y;
 };
 
 Enemy.prototype.setTarget = function(obj){
@@ -23,8 +25,8 @@ Enemy.prototype.update = function(){
 
 Enemy.prototype.updateSpeed = function(){
     var delta = {
-        x: this.target.x - this.sprite.x,
-        y: this.target.y - this.sprite.y
+        x: this.target.x - this.x,
+        y: this.target.y - this.y
     };
 
     var total = Math.abs(delta.x) + Math.abs(delta.y);
@@ -32,13 +34,13 @@ Enemy.prototype.updateSpeed = function(){
         x: delta.x/total,
         y: delta.y/total
     }
-    this.sprite.x += this.speed * ratio.x;
-    this.sprite.y += this.speed * ratio.y;
+    this.x += this.speed * ratio.x;
+    this.y += this.speed * ratio.y;
 
     if (ratio.x < 0){
-        this.sprite.scale.x = this.scale;
+        this.scale.x = this.baseScale;
     } else if(ratio.x > 0){
-        this.sprite.scale.x = -this.scale;
+        this.scale.x = -this.baseScale;
     }
 };
 
