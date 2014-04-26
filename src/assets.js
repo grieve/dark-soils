@@ -4,7 +4,9 @@ assets ={
     images: [
         ['test-tilemap', 'img/test-tilemap.png', 40, 40]
     ],
-    spritesheets: [],
+    spritesheets: [
+        ['player', 'img/player.png', 96, 161]
+    ],
     tilemaps: [
         ['test-map', 'assets/maps/test.csv', null, Phaser.Tilemap.CSV]
     ]
@@ -27,7 +29,7 @@ function preloadAssets(game){
     for (idx = 0; idx < assets.spritesheets.length; idx++){
         game.load.spritesheet(
             assets.spritesheets[idx][0],
-            assets.spritesheets[idx][2],
+            assets.spritesheets[idx][1],
             assets.spritesheets[idx][2],
             assets.spritesheets[idx][3] 
         );
