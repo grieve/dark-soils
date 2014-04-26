@@ -1,6 +1,7 @@
 var Scene = require('./scene');
 var Tilemap = require('./tilemap');
 var Player = require('./player');
+var Enemy = require('./enemy');
 
 var TestScene = function(opts){
     Scene.prototype.constructor.call(this, opts);
@@ -20,10 +21,16 @@ TestScene.prototype.onCreate = function(){
     this.player = new Player(this.game);
     this.player.setPosition(this.game.width/2, this.game.height/2);
     this.game.add.existing(this.player.sprite);
+
+    this.enemy = new Enemy(this.game);
+    this.enemy.setPosition(100, 100);
+    this.enemy.setTarget(this.player.sprite);
+    this.game.add.existing(this.enemy.sprite);
 };
 
 TestScene.prototype.onUpdate = function(){
     this.player.update();
+    this.enemy.update();
 };
 
 module.exports = TestScene;
