@@ -60,8 +60,8 @@ TestScene.prototype.onCreate = function(){
     for (var idx = 0; idx < 10; idx++){
         grave = new Grave(
             this.game,
-            Math.random() * this.tilemap.map.width * this.tilemap.map.tileWidth,
-            Math.random() * this.tilemap.map.height * this.tilemap.map.tileHeight,
+            Math.random() * this.game.world.width,
+            Math.random() * this.game.world.height,
             contents[Math.floor(Math.random() * contents.length)]
         );
         this.graves.push(grave);
