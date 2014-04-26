@@ -64,7 +64,7 @@ MapGen.prototype.getAdjacentTerrainCount = function(x, y) {
     return total;
 };
 
-MapGen.prototype.generate = function() {
+MapGen.prototype.generateTerrain = function() {
 
     for(var x = 0; x < this.size; x++) {
         for(var y = 0; y < this.size; y++) {
@@ -83,6 +83,7 @@ MapGen.prototype.generate = function() {
             case 0:  // water
                 if(adjs == 0) tile.terrain = 3;
                 break;
+
             default: //
                 break;
         }
@@ -90,12 +91,23 @@ MapGen.prototype.generate = function() {
 
 };
 
+MapGen.prototype.generateRooms = function() {
+
+
+};
+
+MapGen.prototype.generate = function() {
+    this.generateTerrain();
+    this.generateRooms();
+};
 
 var MapTile = function(opts) {
 
     this.x = opts.x;
     this.y = opts.y;
     this.terrain = opts.terrain;
+
+    this.blocking = opts.blocking || false;
 
 };
 
