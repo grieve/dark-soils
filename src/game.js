@@ -1,6 +1,7 @@
 var _ = require('lodash');
 var Phaser = require('phaser');
 var LogoScene = require('./logo-scene');
+var MapTestScene = require('./maptest-scene');
 
 var Game = function(){
     Phaser.Game.prototype.constructor.call(
@@ -16,25 +17,27 @@ var Game = function(){
     );
 
     this.logoScene = new LogoScene({game: this});
+    this.mapTestScene = new MapTestScene({game: this});
 };
 
 Game.prototype = Object.create(Phaser.Game.prototype);
 
 Game.prototype.onPreload = function(){
-    this.logoScene.onPreload();
+    //this.logoScene.onPreload();
 };
 
 Game.prototype.onCreate = function(){
-    this.logoScene.onCreate();
+    /*this.logoScene.onCreate();
 
     var game = this;
     setTimeout(function(){
         game.logoScene.onDestroy();
-    }, 5000);
+    }, 5000);*/
+    this.mapTestScene.onCreate();
 };
 
 Game.prototype.onUpdate = function(step){
-    this.logoScene.onUpdate();
+    //this.logoScene.onUpdate();
 };
 
 module.exports = Game;

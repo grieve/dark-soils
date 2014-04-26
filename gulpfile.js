@@ -35,6 +35,10 @@ gulp.task('debug', ['lint'], function(){
                 phaser: {
                     path: 'src/libs/phaser.js',
                     exports: 'Phaser'
+                },
+                perlin: {
+                    path: 'src/libs/perlin.js',
+                    exports: 'Perlin'
                 }
             },
             transform: ['hbsfy']
