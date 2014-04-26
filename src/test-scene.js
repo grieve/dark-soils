@@ -18,6 +18,7 @@ TestScene.prototype.onCreate = function(){
     });
     
     this.player = new Player(this.game);
+    this.player.setPosition(this.game.width/2, this.game.height/2);
     this.game.add.existing(this.player.sprite);
 };
 

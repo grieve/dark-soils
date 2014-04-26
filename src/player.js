@@ -15,7 +15,16 @@ var Player = function(game){
     this.cursors = game.input.keyboard.createCursorKeys();
 };
 
+Player.prototype.setPosition = function(x, y){
+    this.sprite.x = x;
+    this.sprite.y = y;
+};
+
 Player.prototype.update = function(){
+    this.updateSpeed();
+};
+
+Player.prototype.updateSpeed = function(){
     if(this.cursors.down.isDown){
         this.speed.y += this.acceleration;
     }
