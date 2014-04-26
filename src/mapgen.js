@@ -3,6 +3,15 @@ var Phaser = require('phaser');
 var Perlin = require('perlin');
 var ROT = require('rot');
 
+var MAP_SIZE = 64,
+
+MIN_ROOMS = 6,
+MAX_ROOMS = 12,
+ROOM_SIZE_MIN = 6,
+ROOM_SIZE_MAX = 36,
+
+TILE_SIZE = 64;
+
 var terrainTypes = [
     { name: 'water', min: -1, max: -0.9},
     { name: 'mud', min: -0.98, max: -0.7},
@@ -12,23 +21,49 @@ var terrainTypes = [
     { name: 'grave', min: 0.91, max: 1}
 ];
 
-var MIN_ROOMS = 6,
-MAX_ROOMS = 12,
-ROOM_SIZE_MIN = 6,
-ROOM_SIZE_MAX = 36;
 
 var c = function(x, y) {
     return 'x' + x + 'y' + y;
 };
 
-function rndInt (min, max) {
+var rndInt = function (min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
+var MapTile = function(opts) {
+
+    this.x = opts.x;
+    this.y = opts.y;
+    this.terrain = opts.terrain;
+
+    this.blocking = opts.blocking || true;
+
+};
+
+var MapRoom = function(opts) {
+
+    this.x = opts.x;
+    this.y = opts.y;
+    this.width = opts.width;
+    this.height = opts.height;
+    this.map = opts.map;
+
+    this.tiles = {};
+    for(var x = 0; x < this.width; x++) {
+        for(var y = 0; y < this.height; y++) {
+            var rc = c(x, y),
+            mc = c(this.x + x, this.y + y);
+            this.map.data[mc].blocking = false;
+            this.tiles[rc] = this.map.data[mc];
+        }
+    }
+
 };
 
 var MapGen = function(opts){
 
-    this.size = 64;
-
+    this.size = MAP_SIZE;
+    this.init();
 
 };
 
@@ -163,35 +198,78 @@ MapGen.prototype.generate = function() {
     this.generateROTMap();
 };
 
-var MapTile = function(opts) {
+MapGen.prototype.exportJSON = function() {
 
-    this.x = opts.x;
-    this.y = opts.y;
-    this.terrain = opts.terrain;
+    var exp = {};
+    exp.height = exp.width = this.size;
+    exp.orientation = 'orthogonal';
+    exp.tileHeight = exp.tileWidth = TILE_SIZE;
+    exp.version = 1;
+    exp.properties = {};
+    exp.layers = [];
 
-    this.blocking = opts.blocking || true;
+    // tileset setup
+    exp.tilesets = [];
 
-};
+    /*var ts = {
+        firstgid: 0,
+        image: "img/test-tilemap.png",
+        imageheight: 400,
+        imagewidth: 400,
+        margin: 0,
+        name: "test-tilemap",
+        properties: {},
+        spacing: 0,
+        tileheight: 40,
+        tileproperties: {},
+        tilewidth: 40
+    };
+    exp.tilesets.push(ts);*/
 
-var MapRoom = function(opts) {
 
-    this.x = opts.x;
-    this.y = opts.y;
-    this.width = opts.width;
-    this.height = opts.height;
-    this.map = opts.map;
+    // terrain
+    var terrainLayer = {};
+    terrainLayer.height = terrainLayer.width = this.size;
+    terrainLayer.opacity = 1;
+    terrainLayer.type = 'tilelayer';
+    terrainLayer.name = 'Terrain Layer 1';
+    terrainLayer.visible = true;
+    terrainLayer.x = terrainLayer.y = 0;
+    terrainLayer.data = [];
 
-    this.tiles = {};
-    for(var x = 0; x < this.width; x++) {
-        for(var y = 0; y < this.height; y++) {
-            var rc = c(x, y),
-            mc = c(this.x + x, this.y + y);
-            this.map.data[mc].blocking = false;
-            this.tiles[rc] = this.map.data[mc];
+    for(var x = 0; x < this.size; x++) {
+        for(var y = 0; y < this.size; y++) {
+            var tile = this.data[c(x,y)];
+            var tid = tile.terrain; //(tile.blocking) ? null : tile.terrain;
+            terrainLayer.data.push(tid);
         }
     }
 
+    exp.layers.push(terrainLayer);
+
+    console.log('exported', exp);
+
+    return exp;
+
 };
+
+MapGen.prototype.exportCSV = function() {
+
+    var exp = '';
+
+    for(var y = 0; y < this.size; y++) {
+        var row = [];
+        for(var x = 0; x < this.size; x++) {
+            var tile = this.data[c(x,y)];
+            var tid = (tile.blocking) ? 0 : tile.terrain + 1;
+            row.push(tid);
+        }
+        exp += row.join(',') + '\n';
+    }
+    console.log('exported', exp);
+    return exp;
+
+}
 
 
 module.exports = MapGen;

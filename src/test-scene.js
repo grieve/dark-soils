@@ -4,6 +4,7 @@ var Scene = require('./scene');
 var Tilemap = require('./tilemap');
 var Player = require('./player');
 var Enemy = require('./enemy');
+var MapGen = require('./mapgen');
 
 var TestScene = function(opts){
     Scene.prototype.constructor.call(this, opts);
@@ -12,14 +13,25 @@ var TestScene = function(opts){
 TestScene.prototype = Object.create(Scene.prototype);
 
 TestScene.prototype.onCreate = function(){
+
+    var map = new MapGen();
+    map.generate();
+
+    console.log('map', this.game.cache._tilemaps);
+    this.game.cache._tilemaps['mapgen-map'] = {
+        data: map.exportCSV(),
+        format: 0,
+        url: null
+    };
+
     var tilemap = new Tilemap({
         game: this.game,
-        map: "test-map",
+        map: 'mapgen-map',
         tileWidth: 40,
         tileHeight: 40,
         tileset: 'test-tilemap'
     });
-    
+
     this.player = new Player(this.game);
     this.player.setPosition(
         tilemap.map.width * tilemap.map.tileWidth / 2,
