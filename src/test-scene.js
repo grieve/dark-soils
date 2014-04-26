@@ -91,10 +91,10 @@ TestScene.prototype.onPlayerCaught = function(){
 };
 
 TestScene.prototype.onRender = function(){
-    this.game.debug.body(this.player);
-    for (var idx = 0; idx < this.graves.length; idx++){
-        this.game.debug.body(this.graves[idx]);
-    }
+    //this.game.debug.body(this.player);
+    //for (var idx = 0; idx < this.graves.length; idx++){
+    //    this.game.debug.body(this.graves[idx]);
+    //}
 };
 
 module.exports = TestScene;
