@@ -1,10 +1,9 @@
-assets =
-    {
-        images: [
-            ['test-tilemap', 'img/test-tilemap', 40, 40]
-        ],
-        spritesheets: [
-    }
+assets ={
+    images: [
+        ['test-tilemap', 'img/test-tilemap', 40, 40]
+    ],
+    spritesheets: []
+};
 
 function preloadAssets(game){
     var idx;
@@ -35,4 +34,4 @@ function preloadAssets(game){
 module.exports = {
     assets: assets,
     preload: preloadAssets
-}
+};
