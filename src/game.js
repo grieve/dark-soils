@@ -16,6 +16,7 @@ var Game = function(){
         }
     );
 
+    this.zOrdering = new Array(1000);
     this.testScene = new TestScene({game: this});
 };
 

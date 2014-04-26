@@ -37,11 +37,25 @@ TestScene.prototype.onCreate = function(){
 
     this.game.camera.focusOn(this.player.sprite);
     this.game.camera.follow(this.player.sprite, Phaser.Camera.FOLLOW_TOPDOWN);
+
+    this.sprites.push(this.player);
+    this.sprites.push(this.enemy);
 };
 
 TestScene.prototype.onUpdate = function(){
     this.player.update();
     this.enemy.update();
+    this.resolveZ();
+};
+
+TestScene.prototype.resolveZ = function(){
+    this.sprites.sort(function(a,b){
+        return a.sprite.y - b.sprite.y;
+    });
+
+    for (var idx = 0; idx < this.sprites.length; idx++){
+        this.sprites[idx].sprite.bringToTop();
+    };
 };
 
 module.exports = TestScene;
