@@ -21,14 +21,21 @@ TestScene.prototype.onCreate = function(){
     });
     
     this.player = new Player(this.game);
-    this.player.setPosition(this.game.width/2, this.game.height/2);
+    this.player.setPosition(
+        tilemap.map.width * tilemap.map.tileWidth / 2,
+        tilemap.map.height * tilemap.map.tileHeight / 2
+    );
     this.game.add.existing(this.player.sprite);
 
     this.enemy = new Enemy(this.game);
-    this.enemy.setPosition(100, 100);
+    this.enemy.setPosition(
+        this.player.sprite.x + (Math.random() * this.game.width) - this.game.width/2,
+        this.player.sprite.y + (Math.random() * this.game.height) - this.game.height/2
+    );
     this.enemy.setTarget(this.player.sprite);
     this.game.add.existing(this.enemy.sprite);
 
+    this.game.camera.focusOn(this.player.sprite);
     this.game.camera.follow(this.player.sprite, Phaser.Camera.FOLLOW_TOPDOWN);
 };
 
