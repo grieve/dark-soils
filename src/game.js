@@ -4,7 +4,7 @@ var Assets = require('./assets');
 
 var Scenes = {
     mapTest: require('./maptest-scene'),
-    test: require('./test-scene'),
+    game: require('./game-scene'),
     title: require('./title-scene')
 };
 

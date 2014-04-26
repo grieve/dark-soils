@@ -21,7 +21,7 @@ LogoScene.prototype.onUpdate = function(){
     this.logo.y = this.game.height*0.5 + Math.random()*10 - 5;
 
     if (this.game.input.mousePointer.justReleased()){
-        this.game.transitionScene('test');
+        this.game.transitionScene('game');
     }
 };
 
