@@ -1,3 +1,5 @@
+var Phaser = require('phaser');
+
 var Scene = require('./scene');
 var Tilemap = require('./tilemap');
 var Player = require('./player');
@@ -26,6 +28,8 @@ TestScene.prototype.onCreate = function(){
     this.enemy.setPosition(100, 100);
     this.enemy.setTarget(this.player.sprite);
     this.game.add.existing(this.enemy.sprite);
+
+    this.game.camera.follow(this.player.sprite, Phaser.Camera.FOLLOW_TOPDOWN);
 };
 
 TestScene.prototype.onUpdate = function(){
