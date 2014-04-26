@@ -13,12 +13,12 @@ ROOM_SIZE_MAX = 36,
 TILE_SIZE = 64;
 
 var terrainTypes = [
-    { name: 'water', min: -1, max: -0.9},
-    { name: 'mud', min: -0.98, max: -0.7},
-    { name: 'soil', min: -0.69, max: -0.5},
-    { name: 'ground', min: -0.4, max:0.6},
-    { name: 'rock', min: 0.61, max:0.9},
-    { name: 'grave', min: 0.91, max: 1}
+    { name: 'water', tile: 5, min: -1, max: -0.9},
+    { name: 'mud', tile: 4, min: -0.98, max: -0.7},
+    { name: 'soil',  tile: 3, min: -0.69, max: -0.5},
+    { name: 'ground', tile: 1, min: -0.4, max:0.6},
+    { name: 'rock', tile: 2, min: 0.61, max:0.9},
+    //{ name: 'grave', tile: 6, min: 0.91, max: 1}
 ];
 
 
@@ -261,7 +261,7 @@ MapGen.prototype.exportCSV = function() {
         var row = [];
         for(var x = 0; x < this.size; x++) {
             var tile = this.data[c(x,y)];
-            var tid = (tile.blocking) ? 0 : tile.terrain + 1;
+            var tid = (tile.blocking) ? 0 : terrainTypes[tile.terrain].tile;
             row.push(tid);
         }
         exp += row.join(',') + '\n';

@@ -17,7 +17,6 @@ TestScene.prototype.onCreate = function(){
     var map = new MapGen();
     map.generate();
 
-    console.log('map', this.game.cache._tilemaps);
     this.game.cache._tilemaps['mapgen-map'] = {
         data: map.exportCSV(),
         format: 0,
@@ -27,28 +26,28 @@ TestScene.prototype.onCreate = function(){
     var tilemap = new Tilemap({
         game: this.game,
         map: 'mapgen-map',
-        tileWidth: 40,
-        tileHeight: 40,
-        tileset: 'test-tilemap'
+        tileWidth: 64,
+        tileHeight: 64,
+        tileset: 'mapgen-tileset'
     });
 
     this.player = new Player(this.game);
     this.player.setPosition(
-        tilemap.map.width * tilemap.map.tileWidth / 2,
-        tilemap.map.height * tilemap.map.tileHeight / 2
+        this.game.world.centerX,
+        this.game.world.centerY
     );
-    this.game.add.existing(this.player.sprite);
+    this.game.add.existing(this.player);
 
     this.enemy = new Enemy(this.game);
     this.enemy.setPosition(
-        this.player.sprite.x + (Math.random() * this.game.width) - this.game.width/2,
-        this.player.sprite.y + (Math.random() * this.game.height) - this.game.height/2
+        this.player.x + (Math.random() * this.game.width) - this.game.width/2,
+        this.player.y + (Math.random() * this.game.height) - this.game.height/2
     );
-    this.enemy.setTarget(this.player.sprite);
-    this.game.add.existing(this.enemy.sprite);
+    this.enemy.setTarget(this.player);
+    this.game.add.existing(this.enemy);
 
-    this.game.camera.focusOn(this.player.sprite);
-    this.game.camera.follow(this.player.sprite, Phaser.Camera.FOLLOW_TOPDOWN);
+    this.game.camera.focusOn(this.player);
+    this.game.camera.follow(this.player, Phaser.Camera.FOLLOW_TOPDOWN);
 
     this.sprites.push(this.player);
     this.sprites.push(this.enemy);
@@ -58,16 +57,30 @@ TestScene.prototype.onUpdate = function(){
     this.player.update();
     this.enemy.update();
     this.resolveZ();
+
+    if(this.enemy.overlap(this.player)){
+        this.onPlayerCaught();
+    }
+};
+
+TestScene.prototype.onDestroy = function(){
+    Scene.prototype.onDestroy.call(this);
+    this.tilemap.destroy();
 };
 
 TestScene.prototype.resolveZ = function(){
     this.sprites.sort(function(a,b){
-        return a.sprite.y - b.sprite.y;
+        return a.y - b.y;
     });
 
     for (var idx = 0; idx < this.sprites.length; idx++){
-        this.sprites[idx].sprite.bringToTop();
+        this.sprites[idx].bringToTop();
     };
+};
+
+TestScene.prototype.onPlayerCaught = function(){
+    //this.game.transitionScene('title');
+    console.log("touching!");
 };
 
 module.exports = TestScene;

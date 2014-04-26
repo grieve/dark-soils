@@ -10,5 +10,9 @@ var Tilemap = function(opts){
 
 };
 
+Tilemap.prototype.destroy = function(){
+    this.map.destroy();
+};
+
 module.exports = Tilemap;
 
