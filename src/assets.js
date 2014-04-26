@@ -8,7 +8,7 @@ assets ={
     ],
     spritesheets: [
         ['player', 'img/player.png', 96, 161],
-        ['enemy', 'img/enemy.png', 133, 169],
+        ['enemy', 'img/boss_4x180pxh.png', 144, 180],
         ['grave', 'img/grave.png', 195, 319]
     ],
     tilemaps: [

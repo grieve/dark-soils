@@ -5,6 +5,9 @@ var Enemy = function(game){
     this.scale.x = this.scale.y = this.baseScale = 0.6;
     this.anchor.setTo(0.5, 0.5);
     this.speed = 3;
+
+    this.animations.add('walk', [0, 1, 2, 3], 12, true);
+    this.play('walk');
 };
 
 Enemy.prototype = Object.create(Phaser.Sprite.prototype);
@@ -37,9 +40,9 @@ Enemy.prototype.updateSpeed = function(){
     this.x += this.speed * ratio.x;
     this.y += this.speed * ratio.y;
 
-    if (ratio.x < 0){
+    if (ratio.x > 0){
         this.scale.x = this.baseScale;
-    } else if(ratio.x > 0){
+    } else if(ratio.x < 0){
         this.scale.x = -this.baseScale;
     }
 };
