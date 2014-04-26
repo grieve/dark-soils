@@ -6,7 +6,7 @@ assets ={
     ],
     spritesheets: [
         ['player', 'img/player.png', 96, 161],
-        ['enemy', 'img/enemy.png', 130, 174]
+        ['enemy', 'img/enemy.png', 133, 169]
     ],
     tilemaps: [
         ['test-map', 'assets/maps/test.csv', null, Phaser.Tilemap.CSV]

@@ -21,6 +21,7 @@ var Game = function(){
 
     this.logoScene = new LogoScene({game: this});
     this.mapTestScene = new MapTestScene({game: this});
+    this.zOrdering = new Array(1000);
     this.testScene = new TestScene({game: this});
 
     function getURLParam(name) {
