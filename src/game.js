@@ -16,23 +16,18 @@ var Game = function(){
         }
     );
 
-    this.TestScene = new TestScene({game: this});
+    this.testScene = new TestScene({game: this});
 };
 
 Game.prototype = Object.create(Phaser.Game.prototype);
 
 Game.prototype.onPreload = function(){
-    Assets.preload();
+    Assets.preload(this);
     this.testScene.onPreload();
 };
 
 Game.prototype.onCreate = function(){
     this.testScene.onCreate();
-
-    var game = this;
-    setTimeout(function(){
-        game.testScene.onDestroy();
-    }, 5000);
 };
 
 Game.prototype.onUpdate = function(step){
