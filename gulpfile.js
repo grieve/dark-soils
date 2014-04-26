@@ -39,6 +39,10 @@ gulp.task('debug', ['lint'], function(){
                 perlin: {
                     path: 'src/libs/perlin.js',
                     exports: 'Perlin'
+                },
+                rot: {
+                    path: 'src/libs/rot.min.js',
+                    exports: 'ROT'
                 }
             },
             transform: ['hbsfy']

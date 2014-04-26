@@ -16,20 +16,21 @@ MapTestScene.prototype.onCreate = function(){
     map.init();
     map.generate();
 
-    var TILE_SIZE = 10;
+    var TILE_SIZE = 5;
 
     var terrainCols = [
         '#003399',  // water
-        '#143D29',  // mud
-        '#18140F',  // soil
-        '#28321F',  // ground
+        '#333300',  // mud
+        '#472400',  // soil
+        '#003300',  // ground
         '#494949',  // rock
         '#291400'   // grave
     ];
 
     for(var k in map.data) {
         var tile = map.data[k];
-        this.game.debug.geom(new Phaser.Rectangle(tile.x * TILE_SIZE, tile.y * TILE_SIZE, TILE_SIZE, TILE_SIZE), terrainCols[tile.terrain]);
+        var color = (tile.blocking) ? '#111111' : terrainCols[tile.terrain];
+        this.game.debug.geom(new Phaser.Rectangle(tile.x * TILE_SIZE, tile.y * TILE_SIZE, TILE_SIZE, TILE_SIZE), color);
     }
 };
 
