@@ -1,9 +1,12 @@
 var _ = require('lodash');
 var Phaser = require('phaser');
-var LogoScene = require('./logo-scene');
-var MapTestScene = require('./maptest-scene');
-var TestScene = require('./test-scene');
 var Assets = require('./assets');
+
+var Scenes = {
+    mapTest: require('./maptest-scene'),
+    test: require('./test-scene'),
+    title: require('./title-scene')
+};
 
 
 var Game = function(){
@@ -19,10 +22,26 @@ var Game = function(){
         }
     );
 
-    this.logoScene = new LogoScene({game: this});
-    this.mapTestScene = new MapTestScene({game: this});
-    this.zOrdering = new Array(1000);
-    this.testScene = new TestScene({game: this});
+};
+
+Game.prototype = Object.create(Phaser.Game.prototype);
+
+Game.prototype.transitionScene = function(scene){
+    console.log("Transitioning scene: '" + scene + "'");
+    var self = this;
+    var newScene = new Scenes[scene]({game: this});
+    newScene.onPreload(function(){
+        newScene.onCreate();
+        if (self.goScene) self.goScene.onDestroy();
+        self.goScene = newScene;
+    });
+};
+
+Game.prototype.onPreload = function(){
+    Assets.preload(this);
+};
+
+Game.prototype.onCreate = function(){
 
     function getURLParam(name) {
         name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
@@ -31,25 +50,11 @@ var Game = function(){
         return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
     }
 
-    this.goScene = this[getURLParam('scene') + 'Scene'] || this.testScene;
+    this.transitionScene(getURLParam('scene')|| 'title');
 
-};
-
-Game.prototype = Object.create(Phaser.Game.prototype);
-
-Game.prototype.onPreload = function(){
-    Assets.preload(this);
-    if('onPreload' in this.goScene) this.goScene.onPreload();
-};
-
-Game.prototype.onCreate = function(){
-
-    if('onCreate' in this.goScene) this.goScene.onCreate();
 };
 
 Game.prototype.onUpdate = function(step){
-    //this.logoScene.onUpdate();
-
 
     if('onUpdate' in this.goScene) this.goScene.onUpdate();
 };

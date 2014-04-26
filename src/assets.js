@@ -2,11 +2,14 @@ var Phaser = require('phaser');
 
 assets ={
     images: [
-        ['test-tilemap', 'img/test-tilemap.png', 40, 40]
+        ['title', 'img/title.png', 650, 250],
+        ['test-tilemap', 'img/test-tilemap.png', 40, 40],
+        ['base-tileset', 'img/base-tilemap.png', 64, 64]
     ],
     spritesheets: [
         ['player', 'img/player.png', 96, 161],
-        ['enemy', 'img/enemy.png', 133, 169]
+        ['enemy', 'img/enemy.png', 133, 169],
+        ['grave', 'img/grave.png', 195, 319]
     ],
     tilemaps: [
         ['test-map', 'assets/maps/test.csv', null, Phaser.Tilemap.CSV]

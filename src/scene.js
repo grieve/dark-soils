@@ -5,7 +5,8 @@ var Scene = function(opts){
     this.sprites = [];
 };
 
-Scene.prototype.onPreload = function(){
+Scene.prototype.onPreload = function(cb){
+    if(cb) cb();
 };
 
 Scene.prototype.onCreate = function(){
@@ -13,7 +14,7 @@ Scene.prototype.onCreate = function(){
 
 Scene.prototype.onDestroy = function(){
     _.each(this.sprites, function(sprite){
-        sprite.kill();
+        if(sprite) sprite.kill();
     });
 };
 
