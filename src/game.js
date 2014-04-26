@@ -18,10 +18,10 @@ var Game = function(){
         {
             preload: _.bind(this.onPreload, this),
             create: _.bind(this.onCreate, this),
-            update: _.bind(this.onUpdate, this)
+            update: _.bind(this.onUpdate, this),
+            render: _.bind(this.onRender, this)
         }
     );
-
 };
 
 Game.prototype = Object.create(Phaser.Game.prototype);
@@ -57,6 +57,10 @@ Game.prototype.onCreate = function(){
 Game.prototype.onUpdate = function(step){
 
     if('onUpdate' in this.goScene) this.goScene.onUpdate();
+};
+
+Game.prototype.onRender = function(){
+    this.goScene.onRender();
 };
 
 module.exports = Game;

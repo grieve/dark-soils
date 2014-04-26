@@ -4,6 +4,7 @@ var Scene = require('./scene');
 var Tilemap = require('./tilemap');
 var Player = require('./player');
 var Enemy = require('./enemy');
+var Grave = require('./grave');
 
 var TestScene = function(opts){
     Scene.prototype.constructor.call(this, opts);
@@ -40,9 +41,26 @@ TestScene.prototype.onCreate = function(){
 
     this.sprites.push(this.player);
     this.sprites.push(this.enemy);
+
+    this.graves = [];
+
+    var grave;
+    var contents = ['heart', 'zombie', 'nothing'];
+    for (var idx = 0; idx < 10; idx++){
+        grave = new Grave(
+            this.game,
+            Math.random() * this.tilemap.map.width * this.tilemap.map.tileWidth,
+            Math.random() * this.tilemap.map.height * this.tilemap.map.tileHeight,
+            contents[Math.floor(Math.random() * contents.length)]
+        );
+        this.graves.push(grave);
+        this.sprites.push(grave);
+        this.game.add.existing(grave);
+    }
 };
 
 TestScene.prototype.onUpdate = function(){
+    this.game.physics.arcade.collide(this.player, this.graves);
     this.player.update();
     this.enemy.update();
     this.resolveZ();
@@ -50,6 +68,7 @@ TestScene.prototype.onUpdate = function(){
     if(this.enemy.overlap(this.player)){
         this.onPlayerCaught();
     }
+
 };
 
 TestScene.prototype.onDestroy = function(){
@@ -69,7 +88,13 @@ TestScene.prototype.resolveZ = function(){
 
 TestScene.prototype.onPlayerCaught = function(){
     //this.game.transitionScene('title');
-    console.log("touching!");
+};
+
+TestScene.prototype.onRender = function(){
+    this.game.debug.body(this.player);
+    for (var idx = 0; idx < this.graves.length; idx++){
+        this.game.debug.body(this.graves[idx]);
+    }
 };
 
 module.exports = TestScene;
