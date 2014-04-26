@@ -8,7 +8,7 @@ var Player = function(game){
 
     this.maxSpeed = 5;
     this.acceleration  = 1.5;
-    this.damping = 0.8;
+    this.damping = 1.2;
 
     this.speed = {x: 0, y: 0};
 
