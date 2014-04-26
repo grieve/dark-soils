@@ -34,6 +34,12 @@ Enemy.prototype.updateSpeed = function(){
     }
     this.sprite.x += this.speed * ratio.x;
     this.sprite.y += this.speed * ratio.y;
+
+    if (ratio.x < 0){
+        this.sprite.scale.x = this.scale;
+    } else if(ratio.x > 0){
+        this.sprite.scale.x = -this.scale;
+    }
 };
 
 module.exports = Enemy;
