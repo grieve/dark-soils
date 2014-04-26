@@ -68,7 +68,8 @@ TestScene.prototype.resolveZ = function(){
 };
 
 TestScene.prototype.onPlayerCaught = function(){
-    this.game.transitionScene('title');
+    //this.game.transitionScene('title');
+    console.log("touching!");
 };
 
 module.exports = TestScene;
