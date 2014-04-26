@@ -12,7 +12,7 @@ var Player = function(game){
     this.damping = 1.15;
 
     this.cursors = game.input.keyboard.createCursorKeys();
-
+    this.actionButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 };
 
 Player.prototype = Object.create(Phaser.Sprite.prototype);

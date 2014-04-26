@@ -5,6 +5,7 @@ var Tilemap = require('./tilemap');
 var Player = require('./player');
 var Enemy = require('./enemy');
 var Grave = require('./grave');
+var Zombie = require('./zombie');
 
 var TestScene = function(opts){
     Scene.prototype.constructor.call(this, opts);
@@ -64,6 +65,21 @@ TestScene.prototype.onUpdate = function(){
     this.player.update();
     this.enemy.update();
     this.resolveZ();
+
+    if(this.player.actionButton.justReleased(25)){
+        for(var idx = 0; idx < this.graves.length; idx++){
+            if (this.player.overlap(this.graves[idx])){
+                this.graves[idx].open();
+                if(this.graves[idx].contents == 'zombie'){
+                    var zombie = new Zombie(this.game);
+                    zombie.setTarget(this.player);
+                    zombie.setPosition(this.graves[idx].x, this.graves[idx].y + 100);
+                    this.sprites.push(zombie);
+                    this.game.add.existing(zombie);
+                }
+            }
+        }
+    }
     
     if(this.enemy.overlap(this.player)){
         this.onPlayerCaught();
