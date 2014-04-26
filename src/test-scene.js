@@ -17,7 +17,7 @@ TestScene.prototype.onCreate = function(){
         map: "test-map",
         tileWidth: 40,
         tileHeight: 40,
-        tileset: 'test-tilemap'
+        tileset: 'base-tileset'
     });
     
     this.player = new Player(this.game);
