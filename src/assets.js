@@ -15,7 +15,10 @@ var assets = {
         ['lost-soul', 'img/lost-soul.png', 120, 160],
         ['grave', 'img/grave.png', 195, 319],
         ['heart', 'img/heart.png', 78, 99],
+        ['bones', 'img/bones.png', 90, 85],
+        ['finger', 'img/finger.png', 78, 89],
         ['timer', 'img/timer.png', 32, 32],
+        ['hole', 'img/hole.png', 160, 80],
         ['particle-map', 'img/particle-map.png', 3, 3]
     ],
     tilemaps: [

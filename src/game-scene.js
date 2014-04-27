@@ -6,12 +6,17 @@ var Player = require('./player');
 var Enemy = require('./enemy');
 var MapGen = require('./mapgen');
 var Grave = require('./grave');
-var Heart = require('./heart');
 var Zombie = require('./zombie');
 var LostSoul = require('./lost-soul');
 var Essence = require('./essence');
 var Light = require('./light');
 var Narrative = require('./narrative');
+
+var Powerups = {
+    Heart: require('./powerups/heart'),
+    Bones: require('./powerups/bones'),
+    Finger: require('./powerups/finger')
+};
 
 var DigTimes = {
     dirt: 1500,
@@ -95,7 +100,7 @@ GameScene.prototype.create = function(){
         this.narrative.playChapter('intro');
     }, this);
 
-    this.firstDig = true;
+    this.digCount = 0;
 };
 
 GameScene.prototype.update = function(){
@@ -135,7 +140,7 @@ GameScene.prototype.resolveZ = function(){
         }
     }
 
-    if(this.heart) this.heart.bringToTop();
+    if(this.powerup) this.game.world.bringToTop(this.powerup);
     this.player.essence.bringToTop();
     this.game.world.bringToTop(this.narrative);
 };
@@ -167,19 +172,39 @@ GameScene.prototype.getDigArea = function(){
     // determine dynamically from terrain and contents
     var type = 'grass';
 
-    if (this.firstDig){
-        this.firstDig = false;
-        this.game.time.events.add(DigTimes[type]*2, function(){
-            this.spawnGroundskeeper();
-            this.narrative.playChapter('groundskeeper');
-        }, this);
-    }
-
-    return {
+    var digArea = {
         type: type,
         reward: null,
         time: DigTimes[type]
     };
+
+    if (Math.random() > 0.8){
+        digArea.reward = Object.keys(Powerups)[Math.floor(Math.random()*Object.keys(Powerups).length)];
+    }
+
+    // guarantee reward the first time
+    if (this.digCount == 0){
+        digArea.reward = Object.keys(Powerups)[Math.floor(Math.random()*Object.keys(Powerups).length)];
+    }
+
+    return digArea;
+};
+
+GameScene.prototype.completedDig = function(){
+    switch(this.digCount){
+        case 0:
+            this.narrative.playChapter('firstpowerup');
+            break;
+        case 1:
+            this.spawnGroundskeeper();
+            this.narrative.playChapter('groundskeeper');
+            break;
+    }
+    this.digCount++;
+
+    var hole = this.add.sprite(this.player.body.x, this.player.body.y, 'hole', 0); 
+    hole.scale.x = hole.scale.y = 0.6;
+    hole.anchor.set(0.5);
 };
 
 GameScene.prototype.openGrave = function(grave){
@@ -239,9 +264,14 @@ GameScene.prototype.spawnLostSoul = function(grave){
 };
 
 GameScene.prototype.spawnHeart = function(grave){
-    this.heart = new Heart(this, grave.x, grave.y);
-    this.add.existing(this.heart);
-    this.player.essence.value += 2000;
+    this.spawnPowerup(grave.x, grave.y, 'Heart');
+};
+
+GameScene.prototype.spawnPowerup = function(x, y, type){
+    this.powerup = new Powerups[type](this, x, y);
+    this.add.existing(this.powerup);
+    this.player.essence.value += this.powerup.benefit;
+    console.log("Found " + this.powerup.label);
 };
 
 module.exports = GameScene;
