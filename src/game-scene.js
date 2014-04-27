@@ -16,13 +16,13 @@ var DigTimes = {
     grave: 5000
 };
 
-var TestScene = function(opts){
+var GameScene = function(opts){
     Scene.prototype.constructor.call(this, opts);
 };
 
-TestScene.prototype = Object.create(Scene.prototype);
+GameScene.prototype = Object.create(Scene.prototype);
 
-TestScene.prototype.onCreate = function(){
+GameScene.prototype.onCreate = function(){
 
     var map = new MapGen();
     map.generate();
@@ -83,7 +83,7 @@ TestScene.prototype.onCreate = function(){
     }
 };
 
-TestScene.prototype.onUpdate = function(){
+GameScene.prototype.onUpdate = function(){
     this.game.physics.arcade.collide(this.player, this.graves);
     this.player.update();
     this.enemy.update();
@@ -95,12 +95,12 @@ TestScene.prototype.onUpdate = function(){
 
 };
 
-TestScene.prototype.onDestroy = function(){
+GameScene.prototype.onDestroy = function(){
     Scene.prototype.onDestroy.call(this);
     this.tilemap.destroy();
 };
 
-TestScene.prototype.resolveZ = function(){
+GameScene.prototype.resolveZ = function(){
     this.sprites.sort(function(a,b){
         return a.y - b.y;
     });
@@ -114,11 +114,11 @@ TestScene.prototype.resolveZ = function(){
     }
 };
 
-TestScene.prototype.onPlayerCaught = function(){
+GameScene.prototype.onPlayerCaught = function(){
     //this.game.transitionScene('title');
 };
 
-TestScene.prototype.onRender = function(){
+GameScene.prototype.onRender = function(){
     //this.game.debug.body(this.player);
     //for (var idx = 0; idx < this.graves.length; idx++){
     //    this.game.debug.body(this.graves[idx]);
@@ -126,7 +126,7 @@ TestScene.prototype.onRender = function(){
     this.player.onRender();
 };
 
-TestScene.prototype.getDigArea = function(){
+GameScene.prototype.getDigArea = function(){
     for(var idx = 0; idx < this.graves.length; idx++){
         if (this.player.overlap(this.graves[idx])){
             return {
@@ -145,7 +145,7 @@ TestScene.prototype.getDigArea = function(){
     };
 };
 
-TestScene.prototype.openGrave = function(grave){
+GameScene.prototype.openGrave = function(grave){
     grave.open();
     if (grave.contents == "zombie"){
         this.spawnZombie(grave); 
@@ -154,7 +154,7 @@ TestScene.prototype.openGrave = function(grave){
     }
 };
 
-TestScene.prototype.spawnZombie = function(grave){
+GameScene.prototype.spawnZombie = function(grave){
     var zombie = new Zombie(this.game);
     zombie.setTarget(this.player);
     zombie.setPosition(grave.x, grave.y + 100);
@@ -162,4 +162,4 @@ TestScene.prototype.spawnZombie = function(grave){
     this.game.add.existing(zombie);
 };
 
-module.exports = TestScene;
+module.exports = GameScene;
