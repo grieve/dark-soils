@@ -112,6 +112,9 @@ Player.prototype.resolveAnimations = function(){
 Player.prototype.startDig = function(){
 
     this.digArea = this.scene.getDigArea();
+    if (!this.digArea){
+        return;
+    }
     this.digTimer = this.game.time.events.add(this.digArea.time, this.finishDig, this);
 
     this.digging = true;
@@ -142,7 +145,12 @@ Player.prototype.stopDig = function(){
 Player.prototype.finishDig = function(){
     if(this.digArea.type == "grave"){
         this.scene.openGrave(this.digArea.grave);
+    } else {
+        if (this.digArea.reward !== null){
+            this.scene.spawnPowerup(this.x, this.y-80, this.digArea.reward);
+        }
     }
+    this.scene.completedDig();
     this.stopDig();
 };
 

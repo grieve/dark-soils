@@ -3,7 +3,7 @@ var Phaser = require('phaser');
 var Essence = function(scene){
     Phaser.Sprite.call(this, scene.game, 0, 470, 'pixel', 0);
     this.baseValue = this.value = 10000;
-    this.baseDrain = this.drain = 1;
+    this.baseDrain = this.drain = 0.4;
     this.scale.y = 10;
     this.alpha = 0.6;
     this.fixedToCamera = true;
