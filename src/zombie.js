@@ -24,7 +24,24 @@ Zombie.prototype.update = function(){
     this.updateSpeed();
 };
 
+Zombie.prototype.attack = function(target){
+    if (this.attacking){
+        return false;
+    }
+    target.essence.value -= 1000;
+    this.attacking = true;
+    this.game.time.events.add(2000, function(){
+        this.attacking = false;
+        this.play('walk');
+    }, this);
+};
+
 Zombie.prototype.updateSpeed = function(){
+    if (this.attacking){
+        this.body.velocity.x = 0;
+        this.body.velocity.y = 0;
+        return;
+    }
     var delta = {
         x: this.target.x - this.x,
         y: this.target.y - this.y

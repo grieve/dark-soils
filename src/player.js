@@ -3,7 +3,7 @@ var Phaser = require('phaser');
 var Player = function(game){
     Phaser.Sprite.call(this, game, 0, 0, 'player', 0);
     game.physics.enable(this, Phaser.Physics.ARCADE);
-    this.body.setSize(this.width*0.9, this.height*0.35, 0, this.height*0.2);
+    this.body.setSize(this.width*0.4, this.height*0.35, 0, this.height*0.2);
     this.scale.x = this.scale.y = this.baseScale = 0.6;
     this.anchor.setTo(0.5, 0.5);
 
@@ -40,6 +40,7 @@ Player.prototype.update = function(){
 
     this.timeSegment.x = this.x + 30;
     this.timeSegment.y = this.y - 30;
+
 };
 
 Player.prototype.handleInput = function(){
@@ -117,7 +118,12 @@ Player.prototype.startDig = function(){
     );
     this.digEmitter.setXSpeed(-120, 120);
     this.digEmitter.setYSpeed(-160, -120);
-    this.digEmitter.makeParticles('particle-map', [0, 1, 2, 3, 4]);
+
+    var particleMap = {
+        'grass': [0, 1, 2, 3, 4],
+        'grave': [10, 10, 10, 11, 11, 11, 12, 13, 14]
+    };
+    this.digEmitter.makeParticles('particle-map', particleMap[this.digArea.type]);
     this.digEmitter.gravity = 300;
     this.digEmitter.start(false, 1000, 10);
 
@@ -129,7 +135,7 @@ Player.prototype.stopDig = function(){
     this.game.time.events.remove(this.digTimer);
     this.digEmitter.on = false;
     var oldEmitter = this.digEmitter;
-    setTimeout(function(){ oldEmitter.destroy();}, 1000);
+    this.game.time.events.add(1000, function(){ oldEmitter.destroy();}, this);
     this.digging = false;
     this.timeSegment.kill();
 };
@@ -145,6 +151,8 @@ Player.prototype.dig = function(){
     var complete = (this.digArea.time - (this.digTimer.tick - this.game.time.now)) / this.digArea.time;
     var frame = Math.floor(complete*8);
     this.timeSegment.frame = frame;
+    this.digEmitter.x = this.body.x + this.body.width / 2;
+    this.digEmitter.y = this.body.y + this.body.height / 2;
 };
 
 Player.prototype.onReorderZ = function(){

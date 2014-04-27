@@ -9,6 +9,7 @@ var Grave = require('./grave');
 var Heart = require('./heart');
 var Zombie = require('./zombie');
 var LostSoul = require('./lost-soul');
+var Essence = require('./essence');
 var Light = require('./light');
 
 var DigTimes = {
@@ -35,7 +36,7 @@ GameScene.prototype.onCreate = function(){
         url: null
     };
 
-    var tilemap = new Tilemap({
+    this.tilemap = new Tilemap({
         game: this.game,
         map: 'mapgen-map',
         tileWidth: 64,
@@ -51,10 +52,17 @@ GameScene.prototype.onCreate = function(){
     this.game.add.existing(this.player);
 
     this.enemy = new Enemy(this.game);
-    this.enemy.setPosition(
-        this.player.x + (Math.random() * this.game.width) - this.game.width/2,
-        this.player.y + (Math.random() * this.game.height) - this.game.height/2
-    );
+    if (Math.random() > 0.5){
+        this.enemy.setPosition(
+            this.player.x - this.game.width/2,
+            this.player.y + (Math.random() * this.game.height) - this.game.height/2
+        );
+    } else {
+        this.enemy.setPosition(
+            this.player.x + this.game.width/2,
+            this.player.y + (Math.random() * this.game.height) - this.game.height/2
+        );
+    }
     this.enemy.setTarget(this.player);
     this.game.add.existing(this.enemy);
 
@@ -68,10 +76,11 @@ GameScene.prototype.onCreate = function(){
     this.sprites.push(this.player);
     this.sprites.push(this.enemy);
 
+    this.zombies = [];
     this.graves = [];
 
     var grave;
-    var contents = ['heart', 'lostsoul', /*'zombie', 'nothing'*/];
+    var contents = ['heart', 'lostsoul', 'zombie', 'nothing'];
     for (var idx = 0; idx < 20; idx++){
         grave = new Grave(
             this.game,
@@ -83,18 +92,29 @@ GameScene.prototype.onCreate = function(){
         this.sprites.push(grave);
         this.game.add.existing(grave);
     }
+
+    var style = {font: "20px Arial", fill: "#fff", align: "left"};
+    this.player.essence = new Essence(this.game);
+    this.game.add.existing(this.player.essence);
 };
 
 GameScene.prototype.onUpdate = function(){
     this.game.physics.arcade.collide(this.player, this.graves);
+    this.game.physics.arcade.collide(this.enemy, this.graves);
+    this.game.physics.arcade.collide(this.player, this.enemy, this.enemyAttack, null, this);
+    this.game.physics.arcade.collide(this.player, this.zombies, this.enemyAttack, null, this);
     this.player.update();
     this.enemy.update();
+    this.player.essence.update();
     this.resolveZ();
 
-    if(this.enemy.overlap(this.player)){
-        this.onPlayerCaught();
+    if(this.player.essence.value <= 0){
+        this.game.transitionScene('title');
     }
+};
 
+GameScene.prototype.enemyAttack = function(player, enemy){
+    enemy.attack(player);
 };
 
 GameScene.prototype.onDestroy = function(){
@@ -116,18 +136,20 @@ GameScene.prototype.resolveZ = function(){
     }
 
     if(this.heart) this.heart.bringToTop();
-};
-
-GameScene.prototype.onPlayerCaught = function(){
-    //this.game.transitionScene('title');
+    this.player.essence.bringToTop();
 };
 
 GameScene.prototype.onRender = function(){
     //this.game.debug.body(this.player);
+    //this.game.debug.body(this.enemy);
     //for (var idx = 0; idx < this.graves.length; idx++){
     //    this.game.debug.body(this.graves[idx]);
     //}
+    //for (var idx = 0; idx < this.zombies.length; idx++){
+    //    this.game.debug.body(this.zombies[idx]);
+    //}
     this.player.onRender();
+    this.player.essence.render();
 };
 
 GameScene.prototype.getDigArea = function(){
@@ -170,6 +192,7 @@ GameScene.prototype.spawnZombie = function(grave){
     zombie.setTarget(this.player);
     zombie.setPosition(grave.x, grave.y + 100);
     this.sprites.push(zombie);
+    this.zombies.push(zombie);
     this.game.add.existing(zombie);
 };
 
@@ -184,6 +207,7 @@ GameScene.prototype.spawnLostSoul = function(grave){
 GameScene.prototype.spawnHeart = function(grave){
     this.heart = new Heart(this.game, grave.x, grave.y);
     this.game.add.existing(this.heart);
+    this.player.essence.value += 2000;
 };
 
 module.exports = GameScene;

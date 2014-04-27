@@ -2,8 +2,8 @@ var Phaser = require('phaser');
 
 var assets = {
     images: [
-
         ['title', 'img/title.png', 650, 250],
+        ['pixel', 'img/pix.png', 1, 1],
         ['test-tilemap', 'img/test-tilemap.png', 40, 40],
         ['base-tileset', 'img/base-tilemap.png', 64, 64],
         ['mapgen-tileset', 'img/base-tilemap2.png', 64, 64]
@@ -14,7 +14,7 @@ var assets = {
         ['zombie', 'img/zombie.png', 96, 163],
         ['lost-soul', 'img/lost-soul.png', 120, 160],
         ['grave', 'img/grave.png', 195, 319],
-        ['heart', 'img/heart.png', 79, 99],
+        ['heart', 'img/heart.png', 78, 99],
         ['timer', 'img/timer.png', 32, 32],
         ['particle-map', 'img/particle-map.png', 3, 3]
     ],
