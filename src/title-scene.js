@@ -21,7 +21,7 @@ TitleScene.prototype.update = function(){
     this.logo.y = this.game.height*0.5 + Math.random()*10 - 5;
 
     if (this.input.mousePointer.justReleased()){
-        this.game.state.start('game-scene');
+        this.game.nextLevel();
     }
 };
 

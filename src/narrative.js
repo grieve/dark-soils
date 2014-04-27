@@ -6,7 +6,7 @@ var Narrative = function(scene){
     Phaser.Group.prototype.constructor.call(this, scene.game);
     this.scene = scene;
     this.currentLine = 0;
-    this.currentChapter = [];
+    this.currentChapter = null;
 
     this.style = {
         font: "16px Chewy",
@@ -49,13 +49,17 @@ Narrative.prototype.writeLine = function(){
         .start();
     this.currentLine++;
     if (this.currentLine == this.currentChapter.length){
-        this.currentLine = 0;
-        this.currentChapter = [];
+        this.timer = this.game.time.events.add(1500 + script[0] + script[2], this.reset, this);
     } else {
         this.timer = this.game.time.events.add(1500 + script[0] + script[2], this.writeLine, this);
     }
 
     this.add(this.line);
+};
+
+Narrative.prototype.reset = function(){
+    this.currentLine = 0;
+    this.currentChapter = null;
 };
 
 module.exports = Narrative;

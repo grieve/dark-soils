@@ -10,6 +10,7 @@ var assets = {
     ],
     spritesheets: [
         ['player', 'img/protagonist_walk.png', 144, 180],
+        ['player_dead', 'img/protagonist_dead.png', 151, 151],
         ['enemy', 'img/villain_walk.png', 144, 180],
         ['zombie', 'img/zombie_anim.png', 144, 180],
         ['lost-soul', 'img/lost-soul.png', 120, 160],
@@ -19,6 +20,7 @@ var assets = {
         ['finger', 'img/finger.png', 78, 89],
         ['timer', 'img/timer.png', 32, 32],
         ['hole', 'img/hole.png', 160, 80],
+        ['glow', 'img/glow_pulse.png', 64, 64],
         ['particle-map', 'img/particle-map.png', 3, 3]
     ],
     tilemaps: [

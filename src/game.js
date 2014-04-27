@@ -8,6 +8,8 @@ var Scenes = {
     title: require('./title-scene')
 };
 
+var Levels = require('./level-config');
+
 
 var Game = function(){
     Phaser.Game.prototype.constructor.call(
@@ -34,6 +36,8 @@ Game.prototype.onCreate = function(){
     this.state.add('title-scene', new Scenes.title(), false);
     this.state.add('game-scene', new Scenes.game(), false);
 
+    this.currentLevel = 0;
+
     function getURLParam(name) {
         name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
         var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
@@ -42,7 +46,11 @@ Game.prototype.onCreate = function(){
     }
 
     this.physics.startSystem(Phaser.Physics.ARCADE);
-    this.state.start((getURLParam('scene') || 'title') + '-scene');
+    this.state.start((getURLParam('scene') || 'title') + '-scene', true, false, Levels[0]);
+};
+
+Game.prototype.nextLevel = function(){
+    this.state.start('game-scene', true, false, Level[this.currentLevel++]);
 };
 
 module.exports = Game;

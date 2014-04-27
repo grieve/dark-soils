@@ -31,5 +31,14 @@ module.exports = {
         [2200, "A fetid stench erupted from the grave", 1000],
         [3000, "Along with a ravenous undead corpse", 2000],
         [3000, "Samuel wisely decides to run away", 2000]
+    ],
+    nothing: [
+        [3000, "This grave was completely empty", 2500],
+        [3000, "Why would someone bury nothing?", 4500],
+        [3000, "Unless the occupants had already left", 2500]
+    ],
+    beacons: [
+        [3000, "Samuel found that if he concentrated, he could feel the power below him", 2500],
+        [5000, "He stood still for a moment to focus", 4500]
     ]
 };

@@ -11,6 +11,7 @@ var LostSoul = require('./lost-soul');
 var Essence = require('./essence');
 var Light = require('./light');
 var Narrative = require('./narrative');
+var Treasure = require('./treasure');
 
 var Powerups = {
     Heart: require('./powerups/heart'),
@@ -32,8 +33,12 @@ var GameScene = function(){
 GameScene.prototype = Object.create(Scene.prototype);
 GameScene.prototype.constructor = GameScene;
 
-GameScene.prototype.create = function(){
 
+GameScene.prototype.create = function(){
+};
+
+GameScene.prototype.init = function(config){
+    this.config = config;
     var map = new MapGen();
     map.generate();
 
@@ -67,33 +72,16 @@ GameScene.prototype.create = function(){
 
     this.firstZombie = true;
     this.firstSoul = true;
+    this.firstNothing = true;
+    this.firstBeacon = true;
 
     this.holes = [];
+    this.treasures = [];
     this.zombies = [];
     this.graves = [];
 
-    // TEST ZOMBIE
-    //var z = new Zombie(this);
-    //z.setTarget(this.player);
-    //z.setPosition(this.enemy.x, this.enemy.y);
-    //this.add.existing(z);
-    //this.zombies.push(z);
-    //this.sprites.push(z);
-
-
-    var grave;
-    var contents = ['heart', 'lostsoul', 'zombie', 'nothing'];
-    for (var idx = 0; idx < 20; idx++){
-        grave = new Grave(
-            this,
-            Math.random() * this.world.width,
-            Math.random() * this.world.height,
-            contents[Math.floor(Math.random() * contents.length)]
-        );
-        this.graves.push(grave);
-        this.sprites.push(grave);
-        this.add.existing(grave);
-    }
+    this.plantGraves();
+    this.plantTreasures();
 
     this.player.essence = new Essence(this);
     this.add.existing(this.player.essence);
@@ -105,6 +93,55 @@ GameScene.prototype.create = function(){
     }, this);
 
     this.digCount = 0;
+};
+
+GameScene.prototype.plantGraves = function(){
+    var grave;
+    for (var type in this.config.graves){
+        for (var idx = 0; idx < this.config.graves[type]; idx++){
+            grave = new Grave(
+                this,
+                Math.random() * this.world.width,
+                Math.random() * this.world.height,
+                type
+            );
+            this.graves.push(grave);
+            this.sprites.push(grave);
+            this.add.existing(grave);
+        }
+    }
+
+    console.log(this.graves.length + " graves planted");
+};
+
+GameScene.prototype.plantTreasures = function(){
+    var treasure;
+    for(var type in this.config.treasures){
+        for (var idx = 0; idx < this.config.treasures[type]; idx++){
+            treasure = new Treasure(
+                this,
+                Math.random() * this.world.width,
+                Math.random() * this.world.height,
+                type
+            );
+            this.treasures.push(treasure);
+            this.sprites.push(treasure);
+            this.add.existing(treasure);
+        }
+    }
+    console.log(this.treasures.length + " treasures planted");
+};
+
+GameScene.prototype.showTreasures = function(){
+    for(var idx = 0; idx < this.treasures.length; idx++){
+        this.treasures[idx].showBeacon();
+    }
+};
+
+GameScene.prototype.hideTreasures = function(){
+    for(var idx = 0; idx < this.treasures.length; idx++){
+        this.treasures[idx].hideBeacon();
+    }
 };
 
 GameScene.prototype.update = function(){
@@ -119,6 +156,12 @@ GameScene.prototype.update = function(){
 
     if(this.player.essence.value <= 0){
         this.game.state.start('title-scene');
+    }
+
+    if(Math.abs(this.player.body.velocity.x) > 0 || Math.abs(this.player.body.velocity.y) > 0 || this.firstBeacon){
+        this.hideTreasures();
+    } else {
+        this.showTreasures();
     }
 };
 
@@ -167,7 +210,7 @@ GameScene.prototype.getDigArea = function(){
     var idx;
     for(idx = 0; idx < this.graves.length; idx++){
         if (this.player.overlap(this.graves[idx])){
-            if (this.digCount < 4){
+            if (this.digCount < 5){
                 return null;
             }
             if (this.graves[idx].frame == 1){
@@ -196,8 +239,10 @@ GameScene.prototype.getDigArea = function(){
         time: DigTimes[type]
     };
 
-    if (Math.random() > 0.8){
-        digArea.reward = Object.keys(Powerups)[Math.floor(Math.random()*Object.keys(Powerups).length)];
+    for (idx = 0; idx < this.treasures.length; idx++){
+        if(this.player.overlap(this.treasures[idx])){
+            digArea.reward = this.treasures[idx].contents;
+        }
     }
 
     // guarantee reward the first time
@@ -213,12 +258,15 @@ GameScene.prototype.completedDig = function(){
         case 0:
             this.narrative.playChapter('firstpowerup');
             break;
-        case 1:
+        case 2:
             this.spawnGroundskeeper();
             this.narrative.playChapter('groundskeeper');
             break;
-        case 3:
+        case 4:
             this.narrative.playChapter('graves');
+            break;
+        case 8:
+            this.beaconTutorial();
             break;
     }
     this.digCount++;
@@ -228,6 +276,12 @@ GameScene.prototype.completedDig = function(){
     hole.anchor.set(0.5);
 
     this.holes.push(hole);
+
+    for (var idx = 0; idx < this.treasures.length; idx++){
+        if(hole.overlap(this.treasures[idx])){
+            this.treasures[idx].kill();
+        }
+    }
 };
 
 GameScene.prototype.openGrave = function(grave){
@@ -251,7 +305,30 @@ GameScene.prototype.openGrave = function(grave){
                 this.firstSoul = false;
             };
             break;
+        case "nothing":
+            if(this.firstNothing){
+                this.narrative.playChapter('nothing');
+                this.firstNothing = false;
+            }
     }
+};
+
+GameScene.prototype.beaconTutorial = function(){
+    console.log('trying beacon');
+    if (this.narrative.currentChapter !== null){
+        console.log('retrying beacon');
+        return this.game.time.events.add(5000, this.beaconTutorial, this);
+    }
+
+    this.narrative.playChapter('beacons');
+
+    this.game.time.events.add(5500, function(){
+        var treasure = new Treasure(this, this.player.x + 200, this.player.y, 'Bones');
+        this.treasures.push(treasure);
+        this.sprites.push(treasure);
+        this.add.existing(treasure);
+        this.firstBeacon = false;
+    }, this);
 };
 
 GameScene.prototype.spawnGroundskeeper = function(){
