@@ -7,6 +7,7 @@ var Enemy = require('./enemy');
 var MapGen = require('./mapgen');
 var Grave = require('./grave');
 var Zombie = require('./zombie');
+var Light = require('./light');
 
 var TestScene = function(opts){
     Scene.prototype.constructor.call(this, opts);
@@ -47,6 +48,10 @@ TestScene.prototype.onCreate = function(){
     );
     this.enemy.setTarget(this.player);
     this.game.add.existing(this.enemy);
+
+    this.light = new Light(this.game, { radius: 400, id: 'lantern', color: '#ffff66' });
+    this.light.attachTo(this.enemy);
+    this.game.add.existing(this.light);
 
     this.game.camera.focusOn(this.player);
     this.game.camera.follow(this.player, Phaser.Camera.FOLLOW_TOPDOWN);
