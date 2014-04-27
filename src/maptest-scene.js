@@ -1,17 +1,17 @@
 var Scene = require('./scene');
 var MapGen = require('./mapgen');
 
-var MapTestScene = function(opts){
-    Scene.prototype.constructor.call(this, opts);
+var MapTestScene = function(){
+    Scene.prototype.constructor.call(this);
 };
 
 MapTestScene.prototype = Object.create(Scene.prototype);
 
-MapTestScene.prototype.onPreload = function(){
+MapTestScene.prototype.preload = function(){
 
 };
 
-MapTestScene.prototype.onCreate = function(){
+MapTestScene.prototype.create = function(){
     var map = new MapGen();
     map.init();
     map.generate();
@@ -34,7 +34,7 @@ MapTestScene.prototype.onCreate = function(){
     }
 };
 
-MapTestScene.prototype.onUpdate = function(){
+MapTestScene.prototype.update = function(){
 
 };
 

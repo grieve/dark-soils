@@ -1,9 +1,8 @@
 var Phaser = require('phaser');
 
-var Grave = function(game, x, y, contents){
-    Phaser.Sprite.call(this, game, x, y, 'grave', 0);
-    game.physics.enable(this, Phaser.Physics.ARCADE);
-    this.game = game;
+var Grave = function(scene, x, y, contents){
+    Phaser.Sprite.call(this, scene.game, x, y, 'grave', 0);
+    this.game.physics.enable(this, Phaser.Physics.ARCADE);
     this.contents = contents;
     this.anchor.set(0.5, 0.15);
 

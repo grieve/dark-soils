@@ -1,7 +1,7 @@
 var Phaser = require('phaser');
 
-var Essence = function(game){
-    Phaser.Sprite.call(this, game, 0, 470, 'pixel', 0);
+var Essence = function(scene){
+    Phaser.Sprite.call(this, scene.game, 0, 470, 'pixel', 0);
     this.baseValue = this.value = 10000;
     this.baseDrain = this.drain = 1;
     this.scale.y = 10;

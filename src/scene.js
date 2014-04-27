@@ -1,27 +1,27 @@
+var Phaser = require('phaser');
 var _ = require('lodash');
 
-var Scene = function(opts){
-    this.game = opts.game;
-    this.sprites = [];
+var Scene = function(){};
+
+Scene.prototype = Object.create(Phaser.State.prototype);
+Scene.prototype.constructor = Scene;
+
+Scene.prototype.init = function(){
 };
 
-Scene.prototype.onPreload = function(cb){
-    if(cb) cb();
+Scene.prototype.preload = function(){
 };
 
-Scene.prototype.onCreate = function(){
+Scene.prototype.create = function(){
 };
 
-Scene.prototype.onRender = function(){
+Scene.prototype.render = function(){
 };
 
-Scene.prototype.onUpdate = function(){
+Scene.prototype.update = function(){
 };
 
-Scene.prototype.onDestroy = function(){
-    _.each(this.sprites, function(sprite){
-        if(sprite) sprite.kill();
-    });
+Scene.prototype.shutdown = function(){
 };
 
 module.exports = Scene;

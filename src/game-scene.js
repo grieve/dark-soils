@@ -19,13 +19,14 @@ var DigTimes = {
     grave: 5000
 };
 
-var GameScene = function(opts){
-    Scene.prototype.constructor.call(this, opts);
+var GameScene = function(){
+    Scene.prototype.constructor.call(this);
 };
 
 GameScene.prototype = Object.create(Scene.prototype);
+GameScene.prototype.constructor = GameScene;
 
-GameScene.prototype.onCreate = function(){
+GameScene.prototype.create = function(){
 
     var map = new MapGen();
     map.generate();
@@ -37,21 +38,23 @@ GameScene.prototype.onCreate = function(){
     };
 
     this.tilemap = new Tilemap({
-        game: this.game,
+        game: this,
         map: 'mapgen-map',
         tileWidth: 64,
         tileHeight: 64,
         tileset: 'mapgen-tileset'
     });
 
-    this.player = new Player(this.game);
-    this.player.setPosition(
-        this.game.world.centerX,
-        this.game.world.centerY
-    );
-    this.game.add.existing(this.player);
+    this.sprites = [];
 
-    this.enemy = new Enemy(this.game);
+    this.player = new Player(this);
+    this.player.setPosition(
+        this.world.centerX,
+        this.world.centerY
+    );
+    this.add.existing(this.player);
+
+    this.enemy = new Enemy(this);
     if (Math.random() > 0.5){
         this.enemy.setPosition(
             this.player.x - this.game.width/2,
@@ -64,14 +67,14 @@ GameScene.prototype.onCreate = function(){
         );
     }
     this.enemy.setTarget(this.player);
-    this.game.add.existing(this.enemy);
+    this.add.existing(this.enemy);
 
-    this.light = new Light(this.game, { radius: 400, id: 'lantern', color: '#ffff66' });
+    this.light = new Light(this, { radius: 400, id: 'lantern', color: '#ffff66' });
     this.light.attachTo(this.enemy);
-    this.game.add.existing(this.light);
+    this.add.existing(this.light);
 
-    this.game.camera.focusOn(this.player);
-    this.game.camera.follow(this.player, Phaser.Camera.FOLLOW_TOPDOWN);
+    this.camera.focusOn(this.player);
+    this.camera.follow(this.player, Phaser.Camera.FOLLOW_TOPDOWN);
 
     this.sprites.push(this.player);
     this.sprites.push(this.enemy);
@@ -83,33 +86,32 @@ GameScene.prototype.onCreate = function(){
     var contents = ['heart', 'lostsoul', 'zombie', 'nothing'];
     for (var idx = 0; idx < 20; idx++){
         grave = new Grave(
-            this.game,
-            Math.random() * this.game.world.width,
-            Math.random() * this.game.world.height,
+            this,
+            Math.random() * this.world.width,
+            Math.random() * this.world.height,
             contents[Math.floor(Math.random() * contents.length)]
         );
         this.graves.push(grave);
         this.sprites.push(grave);
-        this.game.add.existing(grave);
+        this.add.existing(grave);
     }
 
-    var style = {font: "20px Arial", fill: "#fff", align: "left"};
-    this.player.essence = new Essence(this.game);
-    this.game.add.existing(this.player.essence);
+    this.player.essence = new Essence(this);
+    this.add.existing(this.player.essence);
 };
 
-GameScene.prototype.onUpdate = function(){
-    this.game.physics.arcade.collide(this.player, this.graves);
-    this.game.physics.arcade.collide(this.enemy, this.graves);
-    this.game.physics.arcade.collide(this.player, this.enemy, this.enemyAttack, null, this);
-    this.game.physics.arcade.collide(this.player, this.zombies, this.enemyAttack, null, this);
+GameScene.prototype.update = function(){
+    this.physics.arcade.collide(this.player, this.graves);
+    this.physics.arcade.collide(this.enemy, this.graves);
+    this.physics.arcade.collide(this.player, this.enemy, this.enemyAttack, null, this);
+    this.physics.arcade.collide(this.player, this.zombies, this.enemyAttack, null, this);
     this.player.update();
     this.enemy.update();
     this.player.essence.update();
     this.resolveZ();
 
     if(this.player.essence.value <= 0){
-        this.game.transitionScene('title');
+        this.game.state.start('title-scene');
     }
 };
 
@@ -188,25 +190,25 @@ GameScene.prototype.openGrave = function(grave){
 };
 
 GameScene.prototype.spawnZombie = function(grave){
-    var zombie = new Zombie(this.game);
+    var zombie = new Zombie(this);
     zombie.setTarget(this.player);
     zombie.setPosition(grave.x, grave.y + 100);
     this.sprites.push(zombie);
     this.zombies.push(zombie);
-    this.game.add.existing(zombie);
+    this.add.existing(zombie);
 };
 
 GameScene.prototype.spawnLostSoul = function(grave){
-    var lostSoul = new LostSoul(this.game);
+    var lostSoul = new LostSoul(this);
     lostSoul.setTarget(this.enemy);
     lostSoul.setPosition(grave.x, grave.y + 100);
     this.sprites.push(lostSoul);
-    this.game.add.existing(lostSoul);
+    this.add.existing(lostSoul);
 };
 
 GameScene.prototype.spawnHeart = function(grave){
-    this.heart = new Heart(this.game, grave.x, grave.y);
-    this.game.add.existing(this.heart);
+    this.heart = new Heart(this, grave.x, grave.y);
+    this.add.existing(this.heart);
     this.player.essence.value += 2000;
 };
 
