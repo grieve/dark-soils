@@ -9,6 +9,13 @@ var Grave = require('./grave');
 var Zombie = require('./zombie');
 var Light = require('./light');
 
+var DigTimes = {
+    dirt: 1500,
+    grass: 2000,
+    stone: 3500,
+    grave: 5000
+};
+
 var TestScene = function(opts){
     Scene.prototype.constructor.call(this, opts);
 };
@@ -62,8 +69,8 @@ TestScene.prototype.onCreate = function(){
     this.graves = [];
 
     var grave;
-    var contents = ['heart', 'zombie', 'nothing'];
-    for (var idx = 0; idx < 10; idx++){
+    var contents = ['heart', 'lostsoul', 'zombie', 'nothing'];
+    for (var idx = 0; idx < 20; idx++){
         grave = new Grave(
             this.game,
             Math.random() * this.game.world.width,
@@ -82,21 +89,6 @@ TestScene.prototype.onUpdate = function(){
     this.enemy.update();
     this.resolveZ();
 
-    if(this.player.actionButton.justReleased(25)){
-        for(var idx = 0; idx < this.graves.length; idx++){
-            if (this.player.overlap(this.graves[idx])){
-                this.graves[idx].open();
-                if(this.graves[idx].contents == 'zombie'){
-                    var zombie = new Zombie(this.game);
-                    zombie.setTarget(this.player);
-                    zombie.setPosition(this.graves[idx].x, this.graves[idx].y + 100);
-                    this.sprites.push(zombie);
-                    this.game.add.existing(zombie);
-                }
-            }
-        }
-    }
-
     if(this.enemy.overlap(this.player)){
         this.onPlayerCaught();
     }
@@ -114,8 +106,12 @@ TestScene.prototype.resolveZ = function(){
     });
 
     for (var idx = 0; idx < this.sprites.length; idx++){
-        this.sprites[idx].bringToTop();
-    };
+        if("onReorderZ" in this.sprites[idx]){
+            this.sprites[idx].onReorderZ();
+        } else {
+            this.sprites[idx].bringToTop();
+        }
+    }
 };
 
 TestScene.prototype.onPlayerCaught = function(){
@@ -127,6 +123,43 @@ TestScene.prototype.onRender = function(){
     //for (var idx = 0; idx < this.graves.length; idx++){
     //    this.game.debug.body(this.graves[idx]);
     //}
+    this.player.onRender();
+};
+
+TestScene.prototype.getDigArea = function(){
+    for(var idx = 0; idx < this.graves.length; idx++){
+        if (this.player.overlap(this.graves[idx])){
+            return {
+                type: "grave",
+                grave: this.graves[idx],
+                time: DigTimes.grave
+            };
+        }
+    }
+    // determine dynamically from terrain and contents
+    var type = 'grass';
+    return {
+        type: type,
+        reward: null,
+        time: DigTimes[type]
+    };
+};
+
+TestScene.prototype.openGrave = function(grave){
+    grave.open();
+    if (grave.contents == "zombie"){
+        this.spawnZombie(grave); 
+    } else if (grave.contents == "heart"){
+        this.spawnHeart(grave);
+    }
+};
+
+TestScene.prototype.spawnZombie = function(grave){
+    var zombie = new Zombie(this.game);
+    zombie.setTarget(this.player);
+    zombie.setPosition(grave.x, grave.y + 100);
+    this.sprites.push(zombie);
+    this.game.add.existing(zombie);
 };
 
 module.exports = TestScene;

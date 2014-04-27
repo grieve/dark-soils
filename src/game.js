@@ -31,9 +31,9 @@ Game.prototype.transitionScene = function(scene){
     var self = this;
     var newScene = new Scenes[scene]({game: this});
     newScene.onPreload(function(){
-        newScene.onCreate();
         if (self.goScene) self.goScene.onDestroy();
         self.goScene = newScene;
+        newScene.onCreate();
     });
 };
 
@@ -50,6 +50,7 @@ Game.prototype.onCreate = function(){
         return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
     }
 
+    this.physics.startSystem(Phaser.Physics.ARCADE);
     this.transitionScene(getURLParam('scene')|| 'title');
 
 };

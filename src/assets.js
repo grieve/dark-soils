@@ -1,6 +1,6 @@
 var Phaser = require('phaser');
 
-assets ={
+var assets = {
     images: [
 
         ['title', 'img/title.png', 650, 250],
@@ -12,7 +12,9 @@ assets ={
         ['player', 'img/protagonist_walk.png', 144, 180],
         ['enemy', 'img/villain_walk.png', 144, 180],
         ['zombie', 'img/zombie.png', 96, 163],
-        ['grave', 'img/grave.png', 195, 319]
+        ['grave', 'img/grave.png', 195, 319],
+        ['timer', 'img/timer.png', 32, 32],
+        ['particle-map', 'img/particle-map.png', 3, 3]
     ],
     tilemaps: [
         ['test-map', 'assets/maps/test.csv', null, Phaser.Tilemap.CSV]
