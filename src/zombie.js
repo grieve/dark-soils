@@ -3,9 +3,16 @@ var Phaser = require('phaser');
 var Zombie = function(scene){
     Phaser.Sprite.call(this, scene.game, 0, 0, 'zombie', 0);
     this.game.physics.enable(this, Phaser.Physics.ARCADE);
+    this.body.setSize(this.width*0.32, this.height*0.2, 0, this.height*0.2);
     this.scale.x = this.scale.y = this.baseScale = 0.6;
-    this.anchor.setTo(0.5, 0.5);
+    this.anchor.setTo(0.35, 0.5);
     this.speed = Math.random()*10 + 15;
+
+    this.animations.add('stand', [0], 8, true);
+    this.animations.add('walk', [0, 1, 2], 5, true);
+    this.animations.add('attack', [0, 0, 1, 1, 3, 3, 3, 1], 8, false);
+
+    this.play('walk');
 };
 
 Zombie.prototype = Object.create(Phaser.Sprite.prototype);
@@ -18,7 +25,7 @@ Zombie.prototype.setPosition = function(x, y){
 
 Zombie.prototype.setTarget = function(obj){
     this.target = obj;
-}
+};
 
 Zombie.prototype.update = function(){
     this.updateSpeed();
@@ -30,6 +37,7 @@ Zombie.prototype.attack = function(target){
     }
     target.essence.value -= 1000;
     this.attacking = true;
+    this.play('attack');
     this.game.time.events.add(2000, function(){
         this.attacking = false;
         this.play('walk');
@@ -55,9 +63,9 @@ Zombie.prototype.updateSpeed = function(){
     this.body.velocity.x = this.speed * ratio.x;
     this.body.velocity.y = this.speed * ratio.y;
 
-    if (ratio.x < 0){
+    if (ratio.x > 0){
         this.scale.x = this.baseScale;
-    } else if(ratio.x > 0){
+    } else if(ratio.x < 0){
         this.scale.x = -this.baseScale;
     }
 };

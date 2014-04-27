@@ -11,7 +11,7 @@ var assets = {
     spritesheets: [
         ['player', 'img/protagonist_walk.png', 144, 180],
         ['enemy', 'img/villain_walk.png', 144, 180],
-        ['zombie', 'img/zombie.png', 96, 163],
+        ['zombie', 'img/zombie_anim.png', 144, 180],
         ['lost-soul', 'img/lost-soul.png', 120, 160],
         ['grave', 'img/grave.png', 195, 319],
         ['heart', 'img/heart.png', 78, 99],
@@ -20,6 +20,9 @@ var assets = {
     ],
     tilemaps: [
         ['test-map', 'assets/maps/test.csv', null, Phaser.Tilemap.CSV]
+    ],
+    fonts: [
+        ['narrative-font', 'assets/fonts/narrative.png', 'assets/fonts/narrative.xml']
     ]
 };
 
@@ -51,12 +54,25 @@ function preloadAssets(game){
     }
 
     //load all tilemaps
+    console.log('Preloading tilemaps:');
     for (idx = 0; idx < assets.tilemaps.length; idx++){
+        console.log("\t" + assets.tilemaps[idx][0] + ": " +assets.tilemaps[idx][1]);
         game.load.tilemap(
             assets.tilemaps[idx][0],
             assets.tilemaps[idx][1],
             assets.tilemaps[idx][2],
             assets.tilemaps[idx][3]
+        );
+    }
+
+    //load all fonts
+    console.log('Preloading bitmap fonts:');
+    for (idx =0; idx < assets.fonts.length; idx++){
+        console.log("\t" + assets.fonts[idx][0] + ": " +assets.fonts[idx][1]);
+        game.load.bitmapFont(
+            assets.fonts[0],
+            assets.fonts[1],
+            assets.fonts[2]
         );
     }
 

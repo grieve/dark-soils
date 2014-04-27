@@ -11,6 +11,7 @@ var Zombie = require('./zombie');
 var LostSoul = require('./lost-soul');
 var Essence = require('./essence');
 var Light = require('./light');
+var Narrative = require('./narrative');
 
 var DigTimes = {
     dirt: 1500,
@@ -54,33 +55,22 @@ GameScene.prototype.create = function(){
     );
     this.add.existing(this.player);
 
-    this.enemy = new Enemy(this);
-    if (Math.random() > 0.5){
-        this.enemy.setPosition(
-            this.player.x - this.game.width/2,
-            this.player.y + (Math.random() * this.game.height) - this.game.height/2
-        );
-    } else {
-        this.enemy.setPosition(
-            this.player.x + this.game.width/2,
-            this.player.y + (Math.random() * this.game.height) - this.game.height/2
-        );
-    }
-    this.enemy.setTarget(this.player);
-    this.add.existing(this.enemy);
-
-    this.light = new Light(this, { radius: 400, id: 'lantern', color: '#ffff66' });
-    this.light.attachTo(this.enemy);
-    this.add.existing(this.light);
-
     this.camera.focusOn(this.player);
     this.camera.follow(this.player, Phaser.Camera.FOLLOW_TOPDOWN);
 
     this.sprites.push(this.player);
-    this.sprites.push(this.enemy);
 
     this.zombies = [];
     this.graves = [];
+
+    // TEST ZOMBIE
+    //var z = new Zombie(this);
+    //z.setTarget(this.player);
+    //z.setPosition(this.enemy.x, this.enemy.y);
+    //this.add.existing(z);
+    //this.zombies.push(z);
+    //this.sprites.push(z);
+
 
     var grave;
     var contents = ['heart', 'lostsoul', 'zombie', 'nothing'];
@@ -98,6 +88,14 @@ GameScene.prototype.create = function(){
 
     this.player.essence = new Essence(this);
     this.add.existing(this.player.essence);
+
+    this.narrative = new Narrative(this);
+    this.add.existing(this.narrative);
+    this.game.time.events.add(2000, function(){
+        this.narrative.playChapter('intro');
+    }, this);
+
+    this.firstDig = true;
 };
 
 GameScene.prototype.update = function(){
@@ -106,7 +104,7 @@ GameScene.prototype.update = function(){
     this.physics.arcade.collide(this.player, this.enemy, this.enemyAttack, null, this);
     this.physics.arcade.collide(this.player, this.zombies, this.enemyAttack, null, this);
     this.player.update();
-    this.enemy.update();
+    if(this.enemy) this.enemy.update();
     this.player.essence.update();
     this.resolveZ();
 
@@ -119,7 +117,7 @@ GameScene.prototype.enemyAttack = function(player, enemy){
     enemy.attack(player);
 };
 
-GameScene.prototype.onDestroy = function(){
+GameScene.prototype.destroy = function(){
     Scene.prototype.onDestroy.call(this);
     this.tilemap.destroy();
 };
@@ -139,9 +137,10 @@ GameScene.prototype.resolveZ = function(){
 
     if(this.heart) this.heart.bringToTop();
     this.player.essence.bringToTop();
+    this.game.world.bringToTop(this.narrative);
 };
 
-GameScene.prototype.onRender = function(){
+GameScene.prototype.render = function(){
     //this.game.debug.body(this.player);
     //this.game.debug.body(this.enemy);
     //for (var idx = 0; idx < this.graves.length; idx++){
@@ -150,6 +149,7 @@ GameScene.prototype.onRender = function(){
     //for (var idx = 0; idx < this.zombies.length; idx++){
     //    this.game.debug.body(this.zombies[idx]);
     //}
+    //
     this.player.onRender();
     this.player.essence.render();
 };
@@ -166,6 +166,15 @@ GameScene.prototype.getDigArea = function(){
     }
     // determine dynamically from terrain and contents
     var type = 'grass';
+
+    if (this.firstDig){
+        this.firstDig = false;
+        this.game.time.events.add(DigTimes[type]*2, function(){
+            this.spawnGroundskeeper();
+            this.narrative.playChapter('groundskeeper');
+        }, this);
+    }
+
     return {
         type: type,
         reward: null,
@@ -188,6 +197,29 @@ GameScene.prototype.openGrave = function(grave){
             break;
     }
 };
+
+GameScene.prototype.spawnGroundskeeper = function(){
+    this.enemy = new Enemy(this);
+    if (Math.random() > 0.5){
+        this.enemy.setPosition(
+            this.player.x - this.game.width/2,
+            this.player.y + (Math.random() * this.game.height) - this.game.height/2 - 200
+        );
+    } else {
+        this.enemy.setPosition(
+            this.player.x + this.game.width/2,
+            this.player.y + (Math.random() * this.game.height) - this.game.height/2 + 200
+        );
+    }
+    this.enemy.setTarget(this.player);
+    this.add.existing(this.enemy);
+
+    this.light = new Light(this, { radius: 400, id: 'lantern', color: '#ffff66' });
+    this.light.attachTo(this.enemy);
+    this.add.existing(this.light);
+    this.sprites.push(this.enemy);
+};
+
 
 GameScene.prototype.spawnZombie = function(grave){
     var zombie = new Zombie(this);
