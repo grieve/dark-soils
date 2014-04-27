@@ -2,9 +2,10 @@ var Phaser = require('phaser');
 
 var Zombie = function(game){
     Phaser.Sprite.call(this, game, 0, 0, 'zombie', 0);
+    game.physics.enable(this, Phaser.Physics.ARCADE);
     this.scale.x = this.scale.y = this.baseScale = 0.6;
     this.anchor.setTo(0.5, 0.5);
-    this.speed = Math.random()*0.5 + 1;
+    this.speed = Math.random()*10 + 15;
 };
 
 Zombie.prototype = Object.create(Phaser.Sprite.prototype);
@@ -34,8 +35,8 @@ Zombie.prototype.updateSpeed = function(){
         x: delta.x/total,
         y: delta.y/total
     }
-    this.x += this.speed * ratio.x;
-    this.y += this.speed * ratio.y;
+    this.body.velocity.x = this.speed * ratio.x;
+    this.body.velocity.y = this.speed * ratio.y;
 
     if (ratio.x < 0){
         this.scale.x = this.baseScale;

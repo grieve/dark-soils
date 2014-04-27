@@ -2,11 +2,12 @@ var Phaser = require('phaser');
 
 var Enemy = function(game){
     Phaser.Sprite.call(this, game, 0, 0, 'enemy', 0);
+    game.physics.enable(this, Phaser.Physics.ARCADE);
     this.scale.x = this.scale.y = this.baseScale = 0.6;
     this.anchor.setTo(0.5, 0.5);
-    this.speed = 3;
+    this.speed = 50;
 
-    this.animations.add('walk', [0, 1, 2, 3], 12, true);
+    this.animations.add('walk', [0, 1, 2, 3, 4, 5], 8, true);
     this.play('walk');
 };
 
@@ -37,8 +38,8 @@ Enemy.prototype.updateSpeed = function(){
         x: delta.x/total,
         y: delta.y/total
     }
-    this.x += this.speed * ratio.x;
-    this.y += this.speed * ratio.y;
+    this.body.velocity.x = this.speed * ratio.x;
+    this.body.velocity.y = this.speed * ratio.y;
 
     if (ratio.x > 0){
         this.scale.x = this.baseScale;
