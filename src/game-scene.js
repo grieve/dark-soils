@@ -165,18 +165,19 @@ GameScene.prototype.render = function(){
 
 GameScene.prototype.getDigArea = function(){
     var idx;
-    if (this.digCount > 4){
-        for(idx = 0; idx < this.graves.length; idx++){
-            if (this.player.overlap(this.graves[idx])){
-                if (this.graves[idx].frame == 1){
-                    return null;
-                }
-                return {
-                    type: "grave",
-                    grave: this.graves[idx],
-                    time: DigTimes.grave
-                };
+    for(idx = 0; idx < this.graves.length; idx++){
+        if (this.player.overlap(this.graves[idx])){
+            if (this.digCount > 4){
+                return null;
             }
+            if (this.graves[idx].frame == 1){
+                return null;
+            }
+            return {
+                type: "grave",
+                grave: this.graves[idx],
+                time: DigTimes.grave
+            };
         }
     }
 
