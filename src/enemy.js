@@ -51,6 +51,12 @@ Enemy.prototype.updateSpeed = function(){
         this.body.velocity.y = 0;
         return;
     }
+
+    if(this.target.death){
+        this.body.velocity.x = this.speed;
+        this.body.velocity.y = 0;
+        return;
+    }
     var delta = {
         x: this.target.x - this.x,
         y: this.target.y - this.y

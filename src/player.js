@@ -183,9 +183,9 @@ Player.prototype.dieAnim = function(){
         this.death.scale.y = this.scale.y;
         this.death.animations.add('die', [0, 1, 2, 3], 15, false);
         this.death.play('die');
-        this.alpha = 0;
         this.scene.add.existing(this.death);
         this.scene.narrative.playChapter('death');
+        this.kill();
     }
 };
 
