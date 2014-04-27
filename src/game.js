@@ -26,22 +26,15 @@ var Game = function(){
 
 Game.prototype = Object.create(Phaser.Game.prototype);
 
-Game.prototype.transitionScene = function(scene){
-    console.log("Transitioning scene: '" + scene + "'");
-    var self = this;
-    var newScene = new Scenes[scene]({game: this});
-    newScene.onPreload(function(){
-        if (self.goScene) self.goScene.onDestroy();
-        self.goScene = newScene;
-        newScene.onCreate();
-    });
-};
-
 Game.prototype.onPreload = function(){
     Assets.preload(this);
 };
 
 Game.prototype.onCreate = function(){
+
+    this.state.add('map-scene', new Scenes.mapTest(), false);
+    this.state.add('title-scene', new Scenes.title(), false);
+    this.state.add('game-scene', new Scenes.game(), false);
 
     function getURLParam(name) {
         name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
@@ -51,8 +44,7 @@ Game.prototype.onCreate = function(){
     }
 
     this.physics.startSystem(Phaser.Physics.ARCADE);
-    this.transitionScene(getURLParam('scene')|| 'title');
-
+    this.state.start((getURLParam('scene') || 'title') + '-scene');
 };
 
 Game.prototype.onUpdate = function(step){

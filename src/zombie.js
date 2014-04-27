@@ -1,8 +1,8 @@
 var Phaser = require('phaser');
 
-var Zombie = function(game){
-    Phaser.Sprite.call(this, game, 0, 0, 'zombie', 0);
-    game.physics.enable(this, Phaser.Physics.ARCADE);
+var Zombie = function(scene){
+    Phaser.Sprite.call(this, scene.game, 0, 0, 'zombie', 0);
+    this.game.physics.enable(this, Phaser.Physics.ARCADE);
     this.scale.x = this.scale.y = this.baseScale = 0.6;
     this.anchor.setTo(0.5, 0.5);
     this.speed = Math.random()*10 + 15;

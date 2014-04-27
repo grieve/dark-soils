@@ -2,7 +2,7 @@ var Phaser = require('phaser');
 
 var assets = {
     images: [
-        ['title', 'img/title.png', 650, 250],
+        ['title-text', 'img/title.png', 533, 124],
         ['pixel', 'img/pix.png', 1, 1],
         ['test-tilemap', 'img/test-tilemap.png', 40, 40],
         ['base-tileset', 'img/base-tilemap.png', 64, 64],
@@ -27,7 +27,9 @@ function preloadAssets(game){
     var idx;
 
     //load all images
+    console.log('Preloading images:');
     for (idx = 0; idx < assets.images.length; idx++){
+        console.log("\t" + assets.images[idx][0] + ": " +assets.images[idx][1]);
         game.load.image(
             assets.images[idx][0],
             assets.images[idx][1],
@@ -37,7 +39,9 @@ function preloadAssets(game){
     }
 
     //load all spritesheets
+    console.log('Preloading spritesheets:');
     for (idx = 0; idx < assets.spritesheets.length; idx++){
+        console.log("\t" + assets.spritesheets[idx][0] + ": " +assets.spritesheets[idx][1]);
         game.load.spritesheet(
             assets.spritesheets[idx][0],
             assets.spritesheets[idx][1],

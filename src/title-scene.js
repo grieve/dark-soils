@@ -1,28 +1,28 @@
 var Scene = require('./scene');
 
-var LogoScene = function(opts){
-    Scene.prototype.constructor.call(this, opts);
+var TitleScene = function(){
+    Scene.prototype.constructor.call(this);
 };
 
-LogoScene.prototype = Object.create(Scene.prototype);
+TitleScene.prototype = Object.create(Scene.prototype);
+TitleScene.prototype.constructor = TitleScene;
 
-LogoScene.prototype.onCreate = function(){
-    this.logo = this.game.add.sprite(this.game.width*0.5, this.game.height*0.5, 'title');
+TitleScene.prototype.create = function(){
+    this.logo = this.add.sprite(this.width*0.5, this.height*0.5, 'title-text', 0);
     this.logo.anchor.setTo(0.5, 0.5);
-    this.sprites.push(this.logo.sprite);
 
     var style = {font: "25px Arial", fill: "#ccccad", align: "center"};
-    text = this.game.add.text(400, 350, 'Click to play', style);
+    text = this.add.text(400, 350, 'Click to play', style);
     text.anchor.setTo(0.5);
 };
 
-LogoScene.prototype.onUpdate = function(){
+TitleScene.prototype.update = function(){
     this.logo.x = this.game.width*0.5 + Math.random()*10 - 5;
     this.logo.y = this.game.height*0.5 + Math.random()*10 - 5;
 
-    if (this.game.input.mousePointer.justReleased()){
-        this.game.transitionScene('game');
+    if (this.input.mousePointer.justReleased()){
+        this.game.state.start('game-scene');
     }
 };
 
-module.exports = LogoScene;
+module.exports = TitleScene;
