@@ -167,7 +167,7 @@ GameScene.prototype.getDigArea = function(){
     var idx;
     for(idx = 0; idx < this.graves.length; idx++){
         if (this.player.overlap(this.graves[idx])){
-            if (this.digCount > 4){
+            if (this.digCount < 4){
                 return null;
             }
             if (this.graves[idx].frame == 1){
