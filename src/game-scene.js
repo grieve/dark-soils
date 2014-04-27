@@ -6,7 +6,9 @@ var Player = require('./player');
 var Enemy = require('./enemy');
 var MapGen = require('./mapgen');
 var Grave = require('./grave');
+var Heart = require('./heart');
 var Zombie = require('./zombie');
+var LostSoul = require('./lost-soul');
 var Light = require('./light');
 
 var DigTimes = {
@@ -69,7 +71,7 @@ GameScene.prototype.onCreate = function(){
     this.graves = [];
 
     var grave;
-    var contents = ['heart', 'lostsoul', 'zombie', 'nothing'];
+    var contents = ['heart', 'lostsoul', /*'zombie', 'nothing'*/];
     for (var idx = 0; idx < 20; idx++){
         grave = new Grave(
             this.game,
@@ -112,6 +114,8 @@ GameScene.prototype.resolveZ = function(){
             this.sprites[idx].bringToTop();
         }
     }
+
+    if(this.heart) this.heart.bringToTop();
 };
 
 GameScene.prototype.onPlayerCaught = function(){
@@ -147,10 +151,17 @@ GameScene.prototype.getDigArea = function(){
 
 GameScene.prototype.openGrave = function(grave){
     grave.open();
-    if (grave.contents == "zombie"){
-        this.spawnZombie(grave); 
-    } else if (grave.contents == "heart"){
-        this.spawnHeart(grave);
+    console.log("--" + grave.contents + "--");
+    switch(grave.contents){
+        case "zombie":
+            this.spawnZombie(grave);
+            break;
+        case "heart":
+            this.spawnHeart(grave);
+            break;
+        case "lostsoul":
+            this.spawnLostSoul(grave);
+            break;
     }
 };
 
@@ -160,6 +171,19 @@ GameScene.prototype.spawnZombie = function(grave){
     zombie.setPosition(grave.x, grave.y + 100);
     this.sprites.push(zombie);
     this.game.add.existing(zombie);
+};
+
+GameScene.prototype.spawnLostSoul = function(grave){
+    var lostSoul = new LostSoul(this.game);
+    lostSoul.setTarget(this.enemy);
+    lostSoul.setPosition(grave.x, grave.y + 100);
+    this.sprites.push(lostSoul);
+    this.game.add.existing(lostSoul);
+};
+
+GameScene.prototype.spawnHeart = function(grave){
+    this.heart = new Heart(this.game, grave.x, grave.y);
+    this.game.add.existing(this.heart);
 };
 
 module.exports = GameScene;

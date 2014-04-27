@@ -16,7 +16,7 @@ var Player = function(game){
 
     this.animations.add('stand', [0], 12, true);
     this.animations.add('walk', [0, 1, 2, 3, 4, 5], 15, true);
-    this.animations.add('dig', [5], 12, true);
+    this.animations.add('dig', [6], 12, true);
     this.play('stand');
 
     this.scene = game.goScene;
@@ -136,10 +136,7 @@ Player.prototype.stopDig = function(){
 
 Player.prototype.finishDig = function(){
     if(this.digArea.type == "grave"){
-        this.digArea.grave.open();
-        if (this.digArea.grave.contents == "zombie"){
-            this.scene.spawnZombie(this.digArea.grave);
-        }
+        this.scene.openGrave(this.digArea.grave);
     }
     this.stopDig();
 };
