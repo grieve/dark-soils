@@ -112,6 +112,9 @@ Player.prototype.resolveAnimations = function(){
 Player.prototype.startDig = function(){
 
     this.digArea = this.scene.getDigArea();
+    if (!this.digArea){
+        return;
+    }
     this.digTimer = this.game.time.events.add(this.digArea.time, this.finishDig, this);
 
     this.digging = true;

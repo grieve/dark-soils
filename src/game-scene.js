@@ -65,6 +65,10 @@ GameScene.prototype.create = function(){
 
     this.sprites.push(this.player);
 
+    this.firstZombie = true;
+    this.firstSoul = true;
+
+    this.holes = [];
     this.zombies = [];
     this.graves = [];
 
@@ -160,15 +164,28 @@ GameScene.prototype.render = function(){
 };
 
 GameScene.prototype.getDigArea = function(){
-    for(var idx = 0; idx < this.graves.length; idx++){
-        if (this.player.overlap(this.graves[idx])){
-            return {
-                type: "grave",
-                grave: this.graves[idx],
-                time: DigTimes.grave
-            };
+    var idx;
+    if (this.digCount > 4){
+        for(idx = 0; idx < this.graves.length; idx++){
+            if (this.player.overlap(this.graves[idx])){
+                if (this.graves[idx].frame == 1){
+                    return null;
+                }
+                return {
+                    type: "grave",
+                    grave: this.graves[idx],
+                    time: DigTimes.grave
+                };
+            }
         }
     }
+
+    for (idx = 0; idx < this.holes.length; idx++){
+        if (this.player.overlap(this.holes[idx])){
+            return null;
+        }
+    }
+
     // determine dynamically from terrain and contents
     var type = 'grass';
 
@@ -199,12 +216,17 @@ GameScene.prototype.completedDig = function(){
             this.spawnGroundskeeper();
             this.narrative.playChapter('groundskeeper');
             break;
+        case 3:
+            this.narrative.playChapter('graves');
+            break;
     }
     this.digCount++;
 
     var hole = this.add.sprite(this.player.body.x, this.player.body.y, 'hole', 0); 
     hole.scale.x = hole.scale.y = 0.6;
     hole.anchor.set(0.5);
+
+    this.holes.push(hole);
 };
 
 GameScene.prototype.openGrave = function(grave){
@@ -213,12 +235,20 @@ GameScene.prototype.openGrave = function(grave){
     switch(grave.contents){
         case "zombie":
             this.spawnZombie(grave);
+            if(this.firstZombie){
+                this.narrative.playChapter('zombie');
+                this.firstZombie = false;
+            };
             break;
         case "heart":
             this.spawnHeart(grave);
             break;
         case "lostsoul":
             this.spawnLostSoul(grave);
+            if(this.firstSoul){
+                this.narrative.playChapter('lostsoul');
+                this.firstSoul = false;
+            };
             break;
     }
 };
