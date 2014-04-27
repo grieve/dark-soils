@@ -1,6 +1,5 @@
 var _ = require('lodash');
 var Phaser = require('phaser');
-var Perlin = require('perlin');
 var ROT = require('rot');
 
 var MAP_SIZE = 64,
@@ -10,7 +9,9 @@ MAX_ROOMS = 12,
 ROOM_SIZE_MIN = 6,
 ROOM_SIZE_MAX = 36,
 
-TILE_SIZE = 64;
+TILE_SIZE = 64,
+
+TERRAIN_NUM_AREAS = 40;
 
 var terrainTypes = [
     { name: 'water', tile: 5, min: -1, max: -0.9},
@@ -30,33 +31,30 @@ var rndInt = function (min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
+var lineDistance = function( point1, point2 ) {
+
+  var xs = 0, ys = 0;
+
+  xs = point2.x - point1.x;
+  xs = xs * xs;
+  ys = point2.y - point1.y;
+  ys = ys * ys;
+
+  return Math.sqrt( xs + ys );
+
+}
+
+var rndFloat = function(min, max) {
+    return Math.random() * (max - min) + min;
+}
+
 var MapTile = function(opts) {
 
     this.x = opts.x;
     this.y = opts.y;
     this.terrain = opts.terrain;
 
-    this.blocking = opts.blocking || true;
-
-};
-
-var MapRoom = function(opts) {
-
-    this.x = opts.x;
-    this.y = opts.y;
-    this.width = opts.width;
-    this.height = opts.height;
-    this.map = opts.map;
-
-    this.tiles = {};
-    for(var x = 0; x < this.width; x++) {
-        for(var y = 0; y < this.height; y++) {
-            var rc = c(x, y),
-            mc = c(this.x + x, this.y + y);
-            this.map.data[mc].blocking = false;
-            this.tiles[rc] = this.map.data[mc];
-        }
-    }
+    this.blocking = opts.blocking || false;
 
 };
 
@@ -70,67 +68,70 @@ var MapGen = function(opts){
 MapGen.prototype.init = function() {
 
     this.data = {};
-    this.rooms = {};
-    noise.seed(Math.random());  // global from perlin
 
 };
 
-MapGen.prototype.addRandomTile = function(x, y) {
-
-    var value = noise.simplex2(x, y);
-    var rndTerrain = 3; // default to ground
-    for(var i = 0; i < terrainTypes.length; i++) {
-        var t = terrainTypes[i];
-        if(value >= t.min && value <= t.max) {
-            rndTerrain = i;
-            break;
-        }
-    }
-    //var rndTerrain = Math.round(Math.abs(value) * terrainTypes.length);
-    this.data[c(x, y)] = new MapTile({ x: x, y: y, terrain: rndTerrain });
-
-};
-
-MapGen.prototype.getAdjacentTerrainCount = function(x, y) {
-
-    var linked = [
-        c(x-1, y-1), c(x, y-1), c(x+1, y-1),
-        c(x-1, y), c(x+1, y),
-        c(x-1, y+1), c(x, y+1), c(x+1, y+1)
-    ];
-    var total = 0;
-    var terrain = this.data[c(x,y)].terrain;
-    for(var i = 0; i < 8; i++) {
-        if(this.data[linked[i]] === undefined) continue;
-        if(this.data[linked[i]].terrain == terrain) total++;
-    }
-    return total;
-};
-
+/**
+ * Create a series of terrain regions using super-hacky sub-Voronori logic.
+ * Procedural generation is hard when you're still hung over.
+ */
 MapGen.prototype.generateTerrain = function() {
 
-    for(var x = 0; x < this.size; x++) {
-        for(var y = 0; y < this.size; y++) {
-            this.addRandomTile(x, y);
+    console.log('generateTerrain');
+
+    // create a series of randomly distributed grid floats
+    var points = _createRegionPoints(MAP_SIZE, MAP_SIZE, TERRAIN_NUM_AREAS);
+
+    // now assign a random terrain type to each region spawn point
+    for(var i = 0; i < points.length; i++) {
+        points[i].terrain = rndInt(0, terrainTypes.length - 1);
+    }
+
+    console.log('generateTerrain: points', points);
+
+    // loop the grid and assign the terrain type of the closest region to each tile
+    for (var x = 0; x < this.size; x++) {
+        for (var y = 0; y < this.size; y++) {
+
+            var closest, closestDist = 9999999;
+
+            for (var i = 0; i < TERRAIN_NUM_AREAS; i++) {
+
+                var dist = lineDistance({
+                    x: parseFloat(x + '.5'),
+                    y: parseFloat(y + '.5')
+                }, points[i]);
+
+                if (dist < closestDist) {
+                    closest = points[i];
+                    closestDist = dist;
+                }
+
+            }
+
+            this.data[c(x,y)] = new MapTile({
+                x: x,
+                y: y,
+                terrain: closest.terrain
+            });
         }
     }
 
-    // run passes on the random map
-    for(var k in this.data) {
-        var tile = this.data[k];
-        var adjs = this.getAdjacentTerrainCount(tile.x, tile.y);
+    console.log('generateTerrain: complete', this.data);
 
-        var terrain = tile.terrain;
+};
 
-        switch(terrain) {
-            case 0:  // water
-                if(adjs == 0) tile.terrain = 3;
-                break;
+var _createRegionPoints = function(w, h, numRegions) {
 
-            default: //
-                break;
-        }
+    var points = [];
+    for (var i = 0; i < numRegions; i++) {
+        points.push({
+            id: i,
+            x: rndFloat(0, w),
+            y: rndFloat(0, h)
+        });
     }
+    return points;
 
 };
 
@@ -140,39 +141,6 @@ var checkOverlap = function(x1, y1, w1, h1, x2, y2, w2, h2) {
            x2 + w2 < x1 ||
            y2 > y1 + h1 ||
            y2 + h2 < y1);
-
-};
-
-MapGen.prototype.generateRooms = function() {
-
-    var roomcount = rndInt(MIN_ROOMS, MAX_ROOMS);
-    var retries = 10;
-
-    while(roomcount && retries) {
-
-        var w = rndInt(ROOM_SIZE_MIN, ROOM_SIZE_MAX),
-        h = rndInt(ROOM_SIZE_MIN, ROOM_SIZE_MAX),
-        x = rndInt(0, this.size - w),
-        y = rndInt(0, this.size - h);
-
-        var ok = true;
-        for(var k in this.rooms) {
-            var r = this.rooms[k];
-            if(checkOverlap(x,y,w,h,r.x,r.y,r.width,r.height)) {
-                ok = false;
-                break;
-            }
-        }
-        if(ok) {
-            this.rooms['room' + roomcount] = new MapRoom({
-                x: x, y: y, width: w, height: h, map: this
-            });
-            roomcount--;
-        } else {
-            retries--;
-        }
-
-    }
 
 };
 
@@ -194,8 +162,7 @@ MapGen.prototype.generateROTMap = function() {
 
 MapGen.prototype.generate = function() {
     this.generateTerrain();
-    //this.generateRooms();
-    this.generateROTMap();
+    //this.generateROTMap();
 };
 
 MapGen.prototype.exportJSON = function() {
@@ -210,22 +177,6 @@ MapGen.prototype.exportJSON = function() {
 
     // tileset setup
     exp.tilesets = [];
-
-    /*var ts = {
-        firstgid: 0,
-        image: "img/test-tilemap.png",
-        imageheight: 400,
-        imagewidth: 400,
-        margin: 0,
-        name: "test-tilemap",
-        properties: {},
-        spacing: 0,
-        tileheight: 40,
-        tileproperties: {},
-        tilewidth: 40
-    };
-    exp.tilesets.push(ts);*/
-
 
     // terrain
     var terrainLayer = {};
