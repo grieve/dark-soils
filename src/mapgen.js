@@ -2,6 +2,10 @@ var _ = require('lodash');
 var Phaser = require('phaser');
 var ROT = require('rot');
 
+/**
+ * Config constants
+ */
+
 var MAP_SIZE = 64,
 
 MIN_ROOMS = 6,
@@ -22,6 +26,9 @@ var terrainTypes = [
     //{ name: 'grave', tile: 6, min: 0.91, max: 1}
 ];
 
+/**
+ * Util methods
+ */
 
 var c = function(x, y) {
     return 'x' + x + 'y' + y;
@@ -47,6 +54,19 @@ var lineDistance = function( point1, point2 ) {
 var rndFloat = function(min, max) {
     return Math.random() * (max - min) + min;
 }
+
+var checkOverlap = function(x1, y1, w1, h1, x2, y2, w2, h2) {
+
+    return !(x2 > x1 + w1 ||
+           x2 + w2 < x1 ||
+           y2 > y1 + h1 ||
+           y2 + h2 < y1);
+
+};
+
+/**
+ * Main classes
+ */
 
 var MapTile = function(opts) {
 
@@ -135,15 +155,6 @@ var _createRegionPoints = function(w, h, numRegions) {
 
 };
 
-var checkOverlap = function(x1, y1, w1, h1, x2, y2, w2, h2) {
-
-    return !(x2 > x1 + w1 ||
-           x2 + w2 < x1 ||
-           y2 > y1 + h1 ||
-           y2 + h2 < y1);
-
-};
-
 MapGen.prototype.generateROTMap = function() {
 
     var map = new ROT.Map.Digger(this.size, this.size, {
@@ -160,9 +171,24 @@ MapGen.prototype.generateROTMap = function() {
 
 };
 
+MapGen.prototype.generateWalls = function() {
+
+    // outer walls first
+    for(var t = 0; t < this.size; t++) {
+        this.data[c(t,0)].blocking = true;
+        this.data[c(t,this.size-1)].blocking = true;
+        this.data[c(0,t)].blocking = true;
+        this.data[c(this.size-1,t)].blocking = true;
+    }
+
+    // now do some simple BSP shit to divide up the space into rooms
+    //
+
+};
+
 MapGen.prototype.generate = function() {
     this.generateTerrain();
-    //this.generateROTMap();
+    this.generateWalls();
 };
 
 MapGen.prototype.exportJSON = function() {
