@@ -119,6 +119,10 @@ Player.prototype.startDig = function(){
         'grass': [0, 1, 2, 3, 4],
         'grave': [10, 10, 10, 11, 11, 11, 12, 13, 14]
     };
+    this.digEmitter = this.game.add.emitter(0, 0, 1000);
+    this.digEmitter.setXSpeed(-120, 120);
+    this.digEmitter.setYSpeed(-160, -120);
+    this.digEmitter.gravity = 300;
     this.digEmitter.makeParticles('particle-map', particleMap[this.digArea.type]);
     this.digEmitter.start(false, 1000, 10);
 
