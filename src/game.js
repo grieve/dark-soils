@@ -50,7 +50,7 @@ Game.prototype.onCreate = function(){
 };
 
 Game.prototype.nextLevel = function(){
-    this.state.start('game-scene', true, false, Level[this.currentLevel++]);
+    this.state.start('game-scene', true, false, Levels[0 /*this.currentLevel++*/]);
 };
 
 module.exports = Game;
