@@ -202,13 +202,13 @@ GameScene.prototype.spawnGroundskeeper = function(){
     this.enemy = new Enemy(this);
     if (Math.random() > 0.5){
         this.enemy.setPosition(
-            this.player.x - this.game.width/2,
-            this.player.y + (Math.random() * this.game.height) - this.game.height/2 - 200
+            this.player.x - this.game.width/2 - 200,
+            this.player.y + (Math.random() * this.game.height) - this.game.height/2
         );
     } else {
         this.enemy.setPosition(
-            this.player.x + this.game.width/2,
-            this.player.y + (Math.random() * this.game.height) - this.game.height/2 + 200
+            this.player.x + this.game.width/2 + 200,
+            this.player.y + (Math.random() * this.game.height) - this.game.height/2
         );
     }
     this.enemy.setTarget(this.player);
