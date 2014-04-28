@@ -13,6 +13,11 @@ var Zombie = function(scene){
     this.animations.add('attack', [0, 0, 1, 1, 3, 3, 3, 1], 8, false);
 
     this.play('walk');
+
+    this.aimless = {};
+    this.aimless.x = Math.random() * 2 - 1;
+    this.aimless.y = 1 - Math.abs(this.aimless.x);
+    if(Math.random() > 0.5) this.aimless.y *= -1;
 };
 
 Zombie.prototype = Object.create(Phaser.Sprite.prototype);
@@ -59,6 +64,10 @@ Zombie.prototype.updateSpeed = function(){
     var ratio = {
         x: delta.x/total,
         y: delta.y/total
+    }
+    if(this.target.death){
+        ratio.x = this.aimless.x;
+        ratio.y = this.aimless.y;
     }
     this.body.velocity.x = this.speed * ratio.x;
     this.body.velocity.y = this.speed * ratio.y;

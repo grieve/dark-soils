@@ -159,7 +159,10 @@ GameScene.prototype.update = function(){
     this.resolveZ();
 
     if(this.player.essence.value <= 0){
-        this.game.state.start('title-scene');
+        this.player.dieAnim();
+        this.game.time.events.add(10000, function(){
+            this.game.state.start('title-scene');
+        }, this);
     }
 
     if(Math.abs(this.player.body.velocity.x) > 0 || Math.abs(this.player.body.velocity.y) > 0 || this.firstBeacon){

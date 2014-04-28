@@ -39,6 +39,7 @@ Player.prototype.setPosition = function(x, y){
 };
 
 Player.prototype.update = function(){
+    if (this.death) return;
     this.handleInput();
     this.updateSpeed();
     this.resolveAnimations();
@@ -172,6 +173,20 @@ Player.prototype.onReorderZ = function(){
 
 Player.prototype.onRender = function(){
 
+};
+
+Player.prototype.dieAnim = function(){
+    if (!this.death){
+        this.death = new Phaser.Sprite(this.game, this.x, this.y, 'player_dead', 0);
+        this.death.anchor.set(0.5);
+        this.death.scale.x = this.scale.x;
+        this.death.scale.y = this.scale.y;
+        this.death.animations.add('die', [0, 1, 2, 3], 15, false);
+        this.death.play('die');
+        this.scene.add.existing(this.death);
+        this.scene.narrative.playChapter('death');
+        this.kill();
+    }
 };
 
 module.exports = Player;
