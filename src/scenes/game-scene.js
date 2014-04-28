@@ -1,23 +1,34 @@
 var Phaser = require('phaser');
 
-var Scene = require('./scene');
-var Tilemap = require('./tilemap');
-var Player = require('./player');
-var Enemy = require('./enemy');
-var MapGen = require('./mapgen');
-var Grave = require('./grave');
-var Zombie = require('./zombie');
-var LostSoul = require('./lost-soul');
-var Essence = require('./essence');
-var Light = require('./light');
-var Narrative = require('./narrative');
-var Treasure = require('./treasure');
+var Scene = require('./base');
+var Tilemap = require('../tilemap');
+var TileGen = require('../tilegen');
+var MapGen = require('../mapgen');
+
+var Actors = {
+	Player: require('../actors/player'),
+	Enemy: require('../actors/enemy'),
+	Zombie: require('../actors/zombie'),
+	LostSoul: require('../actors/lost-soul')
+};
+
+var UI = {
+	Essence: require('../ui/essence'),
+	Light: require('../ui/light'),
+	Narrative: require('../ui/narrative')
+};
+
+var Environment = {
+	Grave: require('../environ/grave'),
+	Treasure: require('../environ/treasure')
+}
 
 var Powerups = {
-    Heart: require('./powerups/heart'),
-    Bones: require('./powerups/bones'),
-    Finger: require('./powerups/finger')
+    Heart: require('../powerups/heart'),
+    Bones: require('../powerups/bones'),
+    Finger: require('../powerups/finger')
 };
+
 
 var DigTimes = {
     dirt: 1500,
@@ -40,7 +51,16 @@ GameScene.prototype.create = function(){
 GameScene.prototype.init = function(config){
     this.config = config;
     var map = new MapGen();
+    var tileGen = new TileGen({
+        game: this,
+        terrainTypes: map.terrainTypes,
+        baseTile: 6,
+        tileImg: 'mapgen-tileset',
+        maskImg: 'masks'
+    });
+    tileGen.generate();
     map.generate();
+    map.generateTileTransitions();
 
     this.game.cache._tilemaps['mapgen-map'] = {
         data: map.exportCSV(),
@@ -55,12 +75,13 @@ GameScene.prototype.init = function(config){
         tileHeight: 64,
         tileset: 'mapgen-tileset'
     });
+    this.tilemap.map.addTilesetImage('tilegen-edges', 'tilegen-edges', 64, 64, 0, 0, 100);
 
     this.tilemap.map.setCollisionBetween(20,40);
 
     this.sprites = [];
 
-    this.player = new Player(this);
+    this.player = new Actors.Player(this);
     this.player.setPosition(
         this.world.centerX,
         this.world.centerY
@@ -85,10 +106,10 @@ GameScene.prototype.init = function(config){
     this.plantGraves();
     this.plantTreasures();
 
-    this.player.essence = new Essence(this);
+    this.player.essence = new UI.Essence(this);
     this.add.existing(this.player.essence);
 
-    this.narrative = new Narrative(this);
+    this.narrative = new UI.Narrative(this);
     this.add.existing(this.narrative);
     this.game.time.events.add(2000, function(){
         this.narrative.playChapter('intro');
@@ -101,7 +122,7 @@ GameScene.prototype.plantGraves = function(){
     var grave;
     for (var type in this.config.graves){
         for (var idx = 0; idx < this.config.graves[type]; idx++){
-            grave = new Grave(
+            grave = new Environment.Grave(
                 this,
                 Math.random() * this.world.width,
                 Math.random() * this.world.height,
@@ -120,7 +141,7 @@ GameScene.prototype.plantTreasures = function(){
     var treasure;
     for(var type in this.config.treasures){
         for (var idx = 0; idx < this.config.treasures[type]; idx++){
-            treasure = new Treasure(
+            treasure = new Environment.Treasure(
                 this,
                 Math.random() * this.world.width,
                 Math.random() * this.world.height,
@@ -330,7 +351,7 @@ GameScene.prototype.beaconTutorial = function(){
     this.narrative.playChapter('beacons');
 
     this.game.time.events.add(5500, function(){
-        var treasure = new Treasure(this, this.player.x + 200, this.player.y, 'Bones');
+        var treasure = new Environment.Treasure(this, this.player.x + 200, this.player.y, 'Bones');
         this.treasures.push(treasure);
         this.sprites.push(treasure);
         this.add.existing(treasure);
@@ -339,7 +360,7 @@ GameScene.prototype.beaconTutorial = function(){
 };
 
 GameScene.prototype.spawnGroundskeeper = function(){
-    this.enemy = new Enemy(this);
+    this.enemy = new Actors.Enemy(this);
     if (Math.random() > 0.5){
         this.enemy.setPosition(
             this.player.x - this.game.width/2 - 200,
@@ -354,7 +375,7 @@ GameScene.prototype.spawnGroundskeeper = function(){
     this.enemy.setTarget(this.player);
     this.add.existing(this.enemy);
 
-    this.light = new Light(this, { radius: 400, id: 'lantern', color: '#ffff66' });
+    this.light = new UI.Light(this, { radius: 400, id: 'lantern', color: '#ffff66' });
     this.light.attachTo(this.enemy);
     this.add.existing(this.light);
     this.sprites.push(this.enemy);
@@ -362,7 +383,7 @@ GameScene.prototype.spawnGroundskeeper = function(){
 
 
 GameScene.prototype.spawnZombie = function(grave){
-    var zombie = new Zombie(this);
+    var zombie = new Actors.Zombie(this);
     zombie.setTarget(this.player);
     zombie.setPosition(grave.x, grave.y + 100);
     this.sprites.push(zombie);
@@ -371,7 +392,7 @@ GameScene.prototype.spawnZombie = function(grave){
 };
 
 GameScene.prototype.spawnLostSoul = function(grave){
-    var lostSoul = new LostSoul(this);
+    var lostSoul = new Actors.LostSoul(this);
     lostSoul.setTarget(this.enemy);
     lostSoul.setPosition(grave.x, grave.y + 100);
     this.sprites.push(lostSoul);
