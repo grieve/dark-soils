@@ -12,6 +12,7 @@ var Enemy = function(scene){
     this.animations.add('walk', [0, 1, 2, 3, 4, 5], 8, true);
     this.animations.add('stab', [1, 0, 0, 0, 6, 6, 0, 1], 10, false);
     this.play('walk');
+    this.scene = scene;
 };
 
 Enemy.prototype = Object.create(Phaser.Sprite.prototype);
@@ -38,6 +39,7 @@ Enemy.prototype.attack = function(target){
     this.attacking = true;
     this.game.time.events.add(500, function(){
         target.essence.value -= 4000;
+        this.scene.notifications.addMessage('Essence stolen', true);
     }, this);
     this.game.time.events.add(2000, function(){
         this.attacking = false;

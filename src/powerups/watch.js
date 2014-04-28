@@ -7,9 +7,9 @@ var Heart = function(scene, x, y){
 Heart.prototype = Object.create(Powerup.prototype);
 Heart.prototype.constructor = Heart;
 
-Heart.prototype.graphic = 'heart';
-Heart.prototype.benefit = 3000;
-Heart.prototype.effect = "Essence added";
-Heart.prototype.label = "the heart of dark priest";
+Heart.prototype.graphic = 'watch';
+Heart.prototype.benefit = 0;
+Heart.prototype.effect = "He probably wants this back";
+Heart.prototype.label = "the Groundskeeper's pocket watch";
 
 module.exports = Heart;

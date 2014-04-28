@@ -13,6 +13,7 @@ var Zombie = function(scene){
     this.animations.add('attack', [0, 0, 1, 1, 3, 3, 3, 1], 8, false);
 
     this.play('walk');
+    this.scene = scene;
 
     this.aimless = {};
     this.aimless.x = Math.random() * 2 - 1;
@@ -45,6 +46,7 @@ Zombie.prototype.attack = function(target){
     this.play('attack');
     this.game.time.events.add(2000, function(){
         this.attacking = false;
+        this.scene.notifications.addMessage('Essence stolen', true);
         this.play('walk');
     }, this);
 };

@@ -20,10 +20,18 @@ var assets = {
         ['heart', 'img/heart.png', 78, 99],
         ['bones', 'img/bones.png', 90, 85],
         ['finger', 'img/finger.png', 78, 89],
+        ['blessed-soul', 'img/item-blessedsoul.png', 100, 100],
+        ['evil-soul', 'img/item-evilsoul.png', 100, 100],
+        ['puzzle-cube', 'img/item-puzzlecube.png', 100, 100],
+        ['satanic-charm', 'img/item-satanic_charm.png', 80, 80],
+        ['watch', 'img/item-watch.png', 80, 80],
+        ['holy-figure', 'img/item_holyfigure.png', 100, 100],
+        ['teeth-necklace', 'img/item_teethnecklace.png', 80, 80],
         ['timer', 'img/timer.png', 32, 32],
         ['hole', 'img/hole.png', 160, 80],
         ['glow', 'img/glow_pulse.png', 64, 64],
-        ['particle-map', 'img/particle-map.png', 3, 3]
+        ['particle-map', 'img/particle-map.png', 3, 3],
+
     ],
     tilemaps: [
         ['test-map', 'assets/maps/test.csv', null, Phaser.Tilemap.CSV]

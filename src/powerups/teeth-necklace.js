@@ -7,9 +7,9 @@ var Heart = function(scene, x, y){
 Heart.prototype = Object.create(Powerup.prototype);
 Heart.prototype.constructor = Heart;
 
-Heart.prototype.graphic = 'heart';
-Heart.prototype.benefit = 3000;
-Heart.prototype.effect = "Essence added";
-Heart.prototype.label = "the heart of dark priest";
+Heart.prototype.graphic = 'teeth-necklace';
+Heart.prototype.benefit = 500;
+Heart.prototype.effect = "You feel hungry";
+Heart.prototype.label = "beautiful jewelry made from human teeth";
 
 module.exports = Heart;

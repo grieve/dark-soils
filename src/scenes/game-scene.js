@@ -16,7 +16,9 @@ var Actors = {
 var UI = {
 	Essence: require('../ui/essence'),
 	Light: require('../ui/light'),
-	Narrative: require('../ui/narrative')
+    Vignette: require('../ui/vignette'),
+	Narrative: require('../ui/narrative'),
+    Notifications: require('../ui/notifications')
 };
 
 var Environment = {
@@ -27,7 +29,14 @@ var Environment = {
 var Powerups = {
     Heart: require('../powerups/heart'),
     Bones: require('../powerups/bones'),
-    Finger: require('../powerups/finger')
+    Finger: require('../powerups/finger'),
+    BlessedSoul: require('../powerups/blessed-soul'),
+    EvilSoul: require('../powerups/evil-soul'),
+    PuzzleCube: require('../powerups/puzzle-cube'),
+    SatanicCharm: require('../powerups/satanic-charm'),
+    Watch: require('../powerups/watch'),
+    HolyFigure: require('../powerups/holy-figure'),
+    TeethNecklace: require('../powerups/teeth-necklace')
 };
 
 
@@ -103,14 +112,19 @@ GameScene.prototype.init = function(config){
     this.treasures = [];
     this.zombies = [];
     this.graves = [];
+    this.headstones = [];
 
     this.plantGraves();
     this.plantTreasures();
+
+    this.vignette = new UI.Vignette(this.game, { id: 'screenfade' });
+    this.add.existing(this.vignette);
 
     this.player.essence = new UI.Essence(this);
     this.add.existing(this.player.essence);
 
     this.narrative = new UI.Narrative(this);
+    this.notifications = new UI.Notifications(this);
     this.add.existing(this.narrative);
     this.game.time.events.add(2000, function(){
         this.narrative.playChapter('intro');
@@ -129,7 +143,8 @@ GameScene.prototype.plantGraves = function(){
                 Math.random() * this.world.height,
                 type
             );
-            this.graves.push(grave);
+            this.graves.push(grave.grave);
+            this.headstones.push(grave.headstone);
             this.sprites.push(grave);
             this.add.existing(grave);
         }
@@ -169,8 +184,8 @@ GameScene.prototype.hideTreasures = function(){
 };
 
 GameScene.prototype.update = function(){
-    this.physics.arcade.collide(this.player, this.graves);
-    this.physics.arcade.collide(this.enemy, this.graves);
+    this.physics.arcade.collide(this.player, this.headstones);
+    this.physics.arcade.collide(this.enemy, this.headstones);
     this.physics.arcade.collide(this.player, this.enemy, this.enemyAttack, null, this);
     this.physics.arcade.collide(this.player, this.zombies, this.enemyAttack, null, this);
     this.physics.arcade.collide(this.player, this.tilemap.layer, function() { console.log('collided'); }, null, this);
@@ -212,7 +227,7 @@ GameScene.prototype.resolveZ = function(){
         if("onReorderZ" in this.sprites[idx]){
             this.sprites[idx].onReorderZ();
         } else {
-            this.sprites[idx].bringToTop();
+            this.game.world.bringToTop(this.sprites[idx]);
         }
     }
 
@@ -226,6 +241,7 @@ GameScene.prototype.render = function(){
     //this.game.debug.body(this.enemy);
     //for (var idx = 0; idx < this.graves.length; idx++){
     //    this.game.debug.body(this.graves[idx]);
+    //    this.game.debug.body(this.headstones[idx]);
     //}
     //for (var idx = 0; idx < this.zombies.length; idx++){
     //    this.game.debug.body(this.zombies[idx]);
@@ -239,21 +255,23 @@ GameScene.prototype.render = function(){
 };
 
 GameScene.prototype.getDigArea = function(){
-    var idx;
-    for(idx = 0; idx < this.graves.length; idx++){
-        if (this.player.overlap(this.graves[idx])){
-            if (this.digCount < 5){
-                return null;
-            }
-            if (this.graves[idx].frame == 1){
-                return null;
-            }
-            return {
-                type: "grave",
-                grave: this.graves[idx],
-                time: DigTimes.grave
-            };
+    var onGrave = false;
+    this.game.physics.arcade.overlap(this.player, this.graves, function(player, grave){
+        onGrave = grave;
+    }, null, this);
+
+    if (onGrave){
+        if (this.digCount < 5){
+            return null;
         }
+        if (onGrave.frame == 1){
+            return null;
+        }
+        return {
+            type: "grave",
+            grave: onGrave,
+            time: DigTimes.grave
+        };
     }
 
     for (idx = 0; idx < this.holes.length; idx++){
@@ -321,20 +339,20 @@ GameScene.prototype.completedDig = function(){
 };
 
 GameScene.prototype.openGrave = function(grave){
-    grave.open();
+    grave.frame = 1;
     switch(grave.contents){
         case "zombie":
-            this.spawnZombie(grave);
+            this.spawnZombie(grave.grp);
             if(this.firstZombie){
                 this.narrative.playChapter('zombie');
                 this.firstZombie = false;
             };
             break;
         case "heart":
-            this.spawnHeart(grave);
+            this.spawnHeart(grave.grp);
             break;
         case "lostsoul":
-            this.spawnLostSoul(grave);
+            this.spawnLostSoul(grave.grp);
             if(this.firstSoul){
                 this.narrative.playChapter('lostsoul');
                 this.firstSoul = false;
@@ -411,8 +429,10 @@ GameScene.prototype.spawnHeart = function(grave){
 GameScene.prototype.spawnPowerup = function(x, y, type){
     this.powerup = new Powerups[type](this, x, y);
     this.add.existing(this.powerup);
-    this.player.essence.value += this.powerup.benefit;
-    console.log("Found " + this.powerup.label);
+    this.powerup.applyEffect(this.player);
+    console.log("Found " + this.powerup.label + "[" + this.powerup.effect + "]");
+    this.notifications.addMessage("Found " + this.powerup.label);
+    this.notifications.addMessage(this.powerup.effect);
 };
 
 module.exports = GameScene;
