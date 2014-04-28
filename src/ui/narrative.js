@@ -23,6 +23,7 @@ Narrative.prototype = Object.create(Phaser.Group.prototype);
 Narrative.prototype.constructor = Narrative;
 
 Narrative.prototype.playChapter = function(name){
+    console.log("Loading chapter: " + name);
     this.game.time.events.remove(this.timer);
     this.currentChapter = Script[name];
     this.currentLine = 0;
@@ -31,6 +32,7 @@ Narrative.prototype.playChapter = function(name){
 
 Narrative.prototype.writeLine = function(){
     var script = this.currentChapter[this.currentLine++];
+    console.log(script);
     var insev = script.severity;
     var outsev = script.severity;
     if (this.currentLine == this.currentChapter.length){
