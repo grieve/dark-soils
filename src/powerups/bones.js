@@ -9,6 +9,7 @@ Bones.prototype.constructor = Bones;
 
 Bones.prototype.graphic = "bones";
 Bones.prototype.benefit = 1000;
+Bones.prototype.effect = "Essence added";
 Bones.prototype.label = "the bones of a satanist";
 
 module.exports = Bones;

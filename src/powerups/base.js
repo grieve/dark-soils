@@ -17,7 +17,12 @@ var Powerup = function(scene, x, y){
 Powerup.prototype = Object.create(Phaser.Group.prototype);
 Powerup.prototype.constructor = Powerup;
 
+Powerup.prototype.applyEffect = function(player){
+    player.essence.value += this.benefit;
+};
+
 Powerup.prototype.benefit = 1000;
+Powerup.prototype.effect = "+1000 essence";
 Powerup.prototype.label = "a sacred relic";
 
 module.exports = Powerup;

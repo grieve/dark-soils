@@ -27,7 +27,14 @@ var Environment = {
 var Powerups = {
     Heart: require('../powerups/heart'),
     Bones: require('../powerups/bones'),
-    Finger: require('../powerups/finger')
+    Finger: require('../powerups/finger'),
+    BlessedSoul: require('../powerups/blessed-soul'),
+    EvilSoul: require('../powerups/evil-soul'),
+    PuzzleCube: require('../powerups/puzzle-cube'),
+    SatanicCharm: require('../powerups/satanic-charm'),
+    Watch: require('../powerups/watch'),
+    HolyFigure: require('../powerups/holy-figure'),
+    TeethNecklace: require('../powerups/teeth-necklace')
 };
 
 
@@ -411,8 +418,8 @@ GameScene.prototype.spawnHeart = function(grave){
 GameScene.prototype.spawnPowerup = function(x, y, type){
     this.powerup = new Powerups[type](this, x, y);
     this.add.existing(this.powerup);
-    this.player.essence.value += this.powerup.benefit;
-    console.log("Found " + this.powerup.label);
+    this.powerup.applyEffect(this.player);
+    console.log("Found " + this.powerup.label + "[" + this.powerup.effect + "]");
 };
 
 module.exports = GameScene;
