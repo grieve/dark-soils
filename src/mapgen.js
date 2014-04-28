@@ -245,19 +245,16 @@ MapGen.prototype.generateDoorways = function() {
 
                 if (parents[k].splitType == 'horiz') {
 
-                    var xpos = rndInt(kids[0].x + 1, kids[0].x + kids[0].w - 2);
-                    var ypos = kids[1].y;
+                    var xpos = rndInt(kids[0].x + 1, kids[0].x + kids[0].w - 3);
+                    var ypos = Math.max(1, kids[1].y - 1);
 
                 } else {
-                    var ypos = rndInt(kids[0].y + 1, kids[0].y + kids[0].h - 2);
-                    var xpos = kids[1].x;
+                    var ypos = rndInt(kids[0].y + 1, kids[0].y + kids[0].h - 3);
+                    var xpos = Math.max(1, kids[1].x - 2);
 
                 }
 
-                var id = c(xpos, ypos);
-                this.doors[id] = { x: xpos, y: ypos };
-                this.data[id].blocking = false;
-                this.data[id].isDoor = true;
+               this._unblockArea(xpos, ypos, 3, 3);
             }
 
         }
