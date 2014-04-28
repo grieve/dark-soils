@@ -21,13 +21,15 @@ var Notifications = function(scene){
 Notifications.prototype = Object.create(Phaser.Group.prototype);
 Notifications.prototype.constructor = Notifications;
 
-Notifications.prototype.addMessage = function(message){
-    this.messages.push(message);
+Notifications.prototype.addMessage = function(message, override){
+    if (override){
+        this.messages.unshift(message);
+    } else {
+        this.messages.push(message);
+    }
     console.log(this.running);
-    if(!this.running){
+    if(!this.running || override){
         this.running = true;
-        console.log(this.running);
-        console.log('write');
         this.writeLine();
     }
 };

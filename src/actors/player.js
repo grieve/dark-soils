@@ -177,6 +177,7 @@ Player.prototype.onRender = function(){
 
 Player.prototype.dieAnim = function(){
     if (!this.death){
+        this.scene.notifications.addMessage('There is nothing of you left', true);
         this.death = new Phaser.Sprite(this.game, this.x, this.y, 'player_dead', 0);
         this.death.anchor.set(0.5);
         this.death.scale.x = this.scale.x;
