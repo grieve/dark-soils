@@ -4,6 +4,7 @@ var Scene = require('./scene');
 var Tilemap = require('./tilemap');
 var Player = require('./player');
 var Enemy = require('./enemy');
+var TileGen = require('./tilegen');
 var MapGen = require('./mapgen');
 var Grave = require('./grave');
 var Zombie = require('./zombie');
@@ -40,7 +41,16 @@ GameScene.prototype.create = function(){
 GameScene.prototype.init = function(config){
     this.config = config;
     var map = new MapGen();
+    var tileGen = new TileGen({
+        game: this,
+        terrainTypes: map.terrainTypes,
+        baseTile: 3,
+        tileImg: 'mapgen-tileset',
+        maskImg: 'masks'
+    });
+    tileGen.generate();
     map.generate();
+    map.generateTileTransitions();
 
     this.game.cache._tilemaps['mapgen-map'] = {
         data: map.exportCSV(),
@@ -55,6 +65,7 @@ GameScene.prototype.init = function(config){
         tileHeight: 64,
         tileset: 'mapgen-tileset'
     });
+    this.tilemap.map.addTilesetImage('tilegen-edges', 'tilegen-edges', 64, 64, 0, 0, 100);
 
     this.tilemap.map.setCollisionBetween(20,40);
 

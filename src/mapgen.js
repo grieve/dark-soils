@@ -77,6 +77,7 @@ var MapTile = function(opts) {
 var MapGen = function(opts){
 
     this.size = MAP_SIZE;
+    this.terrainTypes = terrainTypes;
     this.init();
 
 };
@@ -171,6 +172,15 @@ MapGen.prototype._unblockArea = function(x, y, w, h) {
             this.data[c(px,py)].blocking = false;
         }
     }
+}
+
+MapGen.prototype.generateTileTransitions = function() {
+
+
+
+
+
+
 }
 
 MapGen.prototype.generateAreas = function() {
@@ -280,6 +290,13 @@ MapGen.prototype.getAdjacentWallBits = function(x, y) {
         if(this.data[linked[i]].blocking) total += bits[i];
     }
     return total;
+
+};
+
+MapGen.prototype.getAdjacentDifferentBits = function(x, y) {
+
+
+
 };
 
 MapGen.prototype.generateWalls = function() {

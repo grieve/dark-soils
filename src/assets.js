@@ -6,7 +6,8 @@ var assets = {
         ['pixel', 'img/pix.png', 1, 1],
         ['test-tilemap', 'img/test-tilemap.png', 40, 40],
         ['base-tileset', 'img/base-tilemap.png', 64, 64],
-        ['mapgen-tileset', 'img/base-tilemap4.png', 64, 64]
+        ['mapgen-tileset', 'img/base-tilemap4.png', 64, 64],
+        ['masks', 'img/alpha-masks.png', 64, 64]
     ],
     spritesheets: [
         ['player', 'img/protagonist_walk.png', 144, 180],
