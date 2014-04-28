@@ -16,7 +16,8 @@ var Actors = {
 var UI = {
 	Essence: require('../ui/essence'),
 	Light: require('../ui/light'),
-	Narrative: require('../ui/narrative')
+	Narrative: require('../ui/narrative'),
+    Notifications: require('../ui/notifications')
 };
 
 var Environment = {
@@ -118,6 +119,7 @@ GameScene.prototype.init = function(config){
     this.add.existing(this.player.essence);
 
     this.narrative = new UI.Narrative(this);
+    this.notifications = new UI.Notifications(this);
     this.add.existing(this.narrative);
     this.game.time.events.add(2000, function(){
         this.narrative.playChapter('intro');
@@ -420,6 +422,8 @@ GameScene.prototype.spawnPowerup = function(x, y, type){
     this.add.existing(this.powerup);
     this.powerup.applyEffect(this.player);
     console.log("Found " + this.powerup.label + "[" + this.powerup.effect + "]");
+    this.notifications.addMessage("Found " + this.powerup.label);
+    this.notifications.addMessage(this.powerup.effect);
 };
 
 module.exports = GameScene;

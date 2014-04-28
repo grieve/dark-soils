@@ -9,7 +9,7 @@ Heart.prototype.constructor = Heart;
 
 Heart.prototype.graphic = 'holy-figure';
 Heart.prototype.benefit = -1000;
-Heart.prototype.effect = "You feel blessed".
+Heart.prototype.effect = "You feel blessed";
 Heart.prototype.label = "the figurine of a holy icon";
 
 module.exports = Heart;
