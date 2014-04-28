@@ -47,9 +47,19 @@ var DigTimes = {
     dirt: 2000,
     grass: 3000,
     transition: 3000,
+    water: 4000,
     gravel: 5000,
     stone: 7500,
     grave: 10000
+};
+
+var DigChances = {
+    dirt: [0.1, 0.3],
+    grass: [0.2, 0.45],
+    transition: [0.2, 0.2],
+    water: [0.25, 0.3],
+    gravel: [0.3, 0.5],
+    stone: [0.4, 0.6]
 };
 
 var GameScene = function(){
@@ -252,9 +262,11 @@ GameScene.prototype.resolveZ = function(){
     }
 
     if(this.powerup) this.game.world.bringToTop(this.powerup);
-    this.game.world.bringToTop(this.player.essence);
     this.game.world.bringToTop(this.narrative);
     this.game.world.bringToTop(this.notifications);
+    this.game.world.bringToTop(this.rain);
+    this.game.world.bringToTop(this.vignette);
+    this.game.world.bringToTop(this.player.essence);
 };
 
 GameScene.prototype.render = function(){
@@ -322,9 +334,15 @@ GameScene.prototype.getDigArea = function(){
         digArea.reward = treasure.contents;
     }, null, this);
 
+    if (digArea.reward === null){
+        if (Math.random() < DigChances[type][0]){
+            digArea.reward = Math.random() < DigChances[type][1] ? "EvilSoul" : "BlessedSoul";
+        }
+    }
+
     // guarantee reward the first time
     if (this.digCount == 0){
-        digArea.reward = Object.keys(Powerups)[Math.floor(Math.random()*Object.keys(Powerups).length)];
+        digArea.reward = "EvilSoul";
     }
 
     return digArea;
@@ -459,8 +477,13 @@ GameScene.prototype.spawnPowerup = function(x, y, type){
     this.powerup = new Powerups[type](this, x, y);
     this.add.existing(this.powerup);
     this.powerup.applyEffect(this.player);
-    console.log("Found " + this.powerup.label + "[" + this.powerup.effect + "]");
-    this.notifications.addMessage("Found " + this.powerup.label);
+    if (this.powerup.label instanceof Array){
+        this.notifications.addMessage("Found " +
+            this.powerup.label[Math.floor(Math.random()*this.powerup.label.length)]
+        );
+    } else {
+        this.notifications.addMessage("Found " + this.powerup.label);
+    }
     this.notifications.addMessage(this.powerup.effect);
 };
 

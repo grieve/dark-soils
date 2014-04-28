@@ -1,15 +1,19 @@
 module.exports = [
     {
         graves: {
-            heart: 4,
-            zombie: 5,
+            heart: 10,
+            zombie: 2,
             lostsoul: 3,
-            nothing: 6
+            nothing: 3
         },
         treasures: {
-            Heart: 5,
-            Bones: 10,
-            Finger: 15
+            Bones: 8,
+            Finger: 10,
+            PuzzleCube: 1,
+            SatanicCharm: 1,
+            Watch: 1,
+            HolyFigure: 1,
+            TeethNecklace: 1
         }
     }
 ];
