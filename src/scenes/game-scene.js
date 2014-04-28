@@ -121,8 +121,8 @@ GameScene.prototype.init = function(config){
     this.plantGraves();
     this.plantTreasures();
 
-    this.rain = new Environment.Rain(this.game);
-    this.add.existing(this.rain);
+    this.rain = new Environment.Rain(this.game, this.player.x, this.player.y);
+    //this.add.existing(this.rain);
 
     this.vignette = new UI.Vignette(this.game, { id: 'screenfade' });
     this.add.existing(this.vignette);
