@@ -10,6 +10,24 @@ var Tilemap = function(opts){
 
 };
 
+Tilemap.prototype.getTerrainAt = function(x, y){
+    var tile = this.map.getTile(this.layer.getTileX(x), this.layer.getTileY(y), this.layer);
+    switch(tile.index){
+        case 100:
+            return 'water';
+        case 132:
+            return 'gravel';
+        case 164:
+            return 'dirt';
+        case 196:
+            return 'grass';
+        case 228:
+            return 'stone';
+        default:
+            return 'transition';
+    }
+};
+
 Tilemap.prototype.destroy = function(){
     this.map.destroy();
 };
