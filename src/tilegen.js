@@ -33,7 +33,7 @@ var TileGen = function(opts) {
 
     this.init = function() {
 
-        console.log('Initialise tile transition generator...', this);
+        console.log('Initialise tile transition generator...');
 
         this.baseImg = this.game.make.bitmapData(TILE_SIZE, TILE_SIZE);
         this.baseImg.copyPixels(this.tileImg, { x:this.baseTile * TILE_SIZE, y:0, width: TILE_SIZE, height: TILE_SIZE }, 0, 0);

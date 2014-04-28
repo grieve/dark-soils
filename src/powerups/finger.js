@@ -9,6 +9,7 @@ Finger.prototype.constructor = Finger;
 
 Finger.prototype.graphic = 'finger';
 Finger.prototype.benefit = 500;
+Finger.prototype.effect = "Essence added";
 Finger.prototype.label = "the finger of a corrupt judge";
 
 module.exports = Finger;

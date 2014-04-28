@@ -45,9 +45,8 @@ var BSPNode = function(x, y, w, h, MIN_REGION_SIZE) {
         }
 
         var hm = Math.floor(MIN_REGION_SIZE / 2);
-        //var pos = (dir == 'horiz') ? Math.floor(self.h / 2) : Math.floor(self.w / 2);
         var pos = (dir == 'horiz') ? Math.floor(self.h / 2) + rndInt(-hm, hm) : Math.floor(self.w / 2) + rndInt(-hm, hm);
-        console.log('bsp', x, y, w, h, MIN_REGION_SIZE, hm, pos);
+
         if (pos < 0) return false;
 
         var x1 = self.x;

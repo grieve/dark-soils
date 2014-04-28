@@ -14,7 +14,7 @@ var Levels = require('./config/levels');
 var Game = function(){
     Phaser.Game.prototype.constructor.call(
         this,
-        800, 480,
+        800, 800,
         Phaser.AUTO,
         'stage',
         {
