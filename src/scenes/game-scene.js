@@ -25,7 +25,8 @@ var Environment = {
 	Grave: require('../environ/grave'),
 	DogGrave: require('../environ/dog-grave'),
 	Treasure: require('../environ/treasure'),
-    Hole: require('../environ/hole')
+    Hole: require('../environ/hole'),
+    Rain: require('../environ/rain')
 }
 
 var Powerups = {
@@ -119,6 +120,9 @@ GameScene.prototype.init = function(config){
 
     this.plantGraves();
     this.plantTreasures();
+
+    this.rain = new Environment.Rain(this.game, this.player.x, this.player.y);
+    //this.add.existing(this.rain);
 
     this.vignette = new UI.Vignette(this.game, { id: 'screenfade' });
     this.add.existing(this.vignette);
