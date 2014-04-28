@@ -17,7 +17,8 @@ var UI = {
 	Essence: require('../ui/essence'),
 	Light: require('../ui/light'),
     Vignette: require('../ui/vignette'),
-	Narrative: require('../ui/narrative')
+	Narrative: require('../ui/narrative'),
+    Notifications: require('../ui/notifications')
 };
 
 var Environment = {
@@ -28,7 +29,14 @@ var Environment = {
 var Powerups = {
     Heart: require('../powerups/heart'),
     Bones: require('../powerups/bones'),
-    Finger: require('../powerups/finger')
+    Finger: require('../powerups/finger'),
+    BlessedSoul: require('../powerups/blessed-soul'),
+    EvilSoul: require('../powerups/evil-soul'),
+    PuzzleCube: require('../powerups/puzzle-cube'),
+    SatanicCharm: require('../powerups/satanic-charm'),
+    Watch: require('../powerups/watch'),
+    HolyFigure: require('../powerups/holy-figure'),
+    TeethNecklace: require('../powerups/teeth-necklace')
 };
 
 
@@ -115,6 +123,7 @@ GameScene.prototype.init = function(config){
     this.add.existing(this.player.essence);
 
     this.narrative = new UI.Narrative(this);
+    this.notifications = new UI.Notifications(this);
     this.add.existing(this.narrative);
     this.game.time.events.add(2000, function(){
         this.narrative.playChapter('intro');
@@ -415,8 +424,10 @@ GameScene.prototype.spawnHeart = function(grave){
 GameScene.prototype.spawnPowerup = function(x, y, type){
     this.powerup = new Powerups[type](this, x, y);
     this.add.existing(this.powerup);
-    this.player.essence.value += this.powerup.benefit;
-    console.log("Found " + this.powerup.label);
+    this.powerup.applyEffect(this.player);
+    console.log("Found " + this.powerup.label + "[" + this.powerup.effect + "]");
+    this.notifications.addMessage("Found " + this.powerup.label);
+    this.notifications.addMessage(this.powerup.effect);
 };
 
 module.exports = GameScene;

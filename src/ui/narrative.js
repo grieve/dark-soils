@@ -46,8 +46,8 @@ Narrative.prototype.writeLine = function(){
     if (this.line) this.line.destroy();
     this.line = new Phaser.Text(
         this.game,
-        this.scene.player.x + 120,
-        this.scene.player.y - 120,
+        this.scene.player.x,
+        this.scene.player.y,
         script.line,
         this.style
     );
@@ -66,8 +66,8 @@ Narrative.prototype.writeLine = function(){
 
 Narrative.prototype.update = function(){
     if(this.line){
-        this.line.x = this.scene.player.x - 30 + Math.random() * this.line.severity;
-        this.line.y = this.scene.player.y - 120 + Math.random() * this.line.severity;
+        this.line.x = this.scene.player.x + Math.random() * this.line.severity;
+        this.line.y = this.scene.player.y - 70 + Math.random() * this.line.severity - this.line.height;
     }
 };
 
