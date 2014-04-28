@@ -1,6 +1,6 @@
 var _ = require('lodash');
 var Phaser = require('phaser');
-var ROT = require('rot');
+var BSPNode = require('./libs/bsp');
 
 /**
  * Config constants
@@ -8,13 +8,9 @@ var ROT = require('rot');
 
 var MAP_SIZE = 64,
 
-MIN_ROOMS = 6,
-MAX_ROOMS = 12,
-ROOM_SIZE_MIN = 6,
-ROOM_SIZE_MAX = 36,
-
+MIN_REGION_SIZE = 10,
 TILE_SIZE = 64,
-
+MAX_RECURSIONS = 4,
 TERRAIN_NUM_AREAS = 40;
 
 var terrainTypes = [
@@ -74,7 +70,7 @@ var MapTile = function(opts) {
     this.y = opts.y;
     this.terrain = opts.terrain;
 
-    this.blocking = opts.blocking || false;
+    this.blocking = opts.blocking || true;
 
 };
 
@@ -97,7 +93,7 @@ MapGen.prototype.init = function() {
  */
 MapGen.prototype.generateTerrain = function() {
 
-    console.log('generateTerrain');
+    console.log('Generating level terrain...');
 
     // create a series of randomly distributed grid floats
     var points = _createRegionPoints(MAP_SIZE, MAP_SIZE, TERRAIN_NUM_AREAS);
@@ -106,8 +102,6 @@ MapGen.prototype.generateTerrain = function() {
     for(var i = 0; i < points.length; i++) {
         points[i].terrain = rndInt(0, terrainTypes.length - 1);
     }
-
-    console.log('generateTerrain: points', points);
 
     // loop the grid and assign the terrain type of the closest region to each tile
     for (var x = 0; x < this.size; x++) {
@@ -137,7 +131,7 @@ MapGen.prototype.generateTerrain = function() {
         }
     }
 
-    console.log('generateTerrain: complete', this.data);
+    console.log('\tComplete');
 
 };
 
@@ -168,30 +162,123 @@ MapGen.prototype.generateROTMap = function() {
         self.data[c(x,y)].blocking = v;
     });
 
+};
+
+MapGen.prototype._unblockArea = function(x, y, w, h) {
+    for(var px = x; px < x + w; px++) {
+        for(var py = y; py < y + h; py++) {
+            //console.log('unblock cell', c(px,py));
+            this.data[c(px,py)].blocking = false;
+        }
+    }
+}
+
+MapGen.prototype.generateAreas = function() {
+
+    console.log('Generating level areas...');
+    // Assuming a virtual area the size of our map
+    // do some crude BSP shit to divide up the area into regions
+    var bspTree = new BSPNode(0, 0, MAP_SIZE - 1, MAP_SIZE - 1, MIN_REGION_SIZE);
+    bspTree.splitRandomRecursive(MAX_RECURSIONS);
+
+    console.log('\tBSP tree created', bspTree);
+
+    // get the distinct regions from the BSP split
+    regions = {};
+    for(var r = 0; r < MAX_RECURSIONS + 1; r++) {
+        regions['level' + r] = [];
+    }
+
+    var push_regions = function(parentNode, recursionsLeft) {
+
+        var level = 'level' + (MAX_RECURSIONS - recursionsLeft);
+        regions[level].push(parentNode);
+
+        if (! parentNode.childNodes.length) return false;
+        if (recursionsLeft == 0) return false;
+        recursionsLeft--;
+
+        var level = 'level' + (MAX_RECURSIONS - recursionsLeft);
+        regions[level].push(parentNode.childNodes[0]);
+        regions[level].push(parentNode.childNodes[1]);
+
+        push_regions(parentNode.childNodes[0], recursionsLeft);
+        push_regions(parentNode.childNodes[1], recursionsLeft);
+    };
+
+    push_regions(bspTree, MAX_RECURSIONS);
+
+    var set = regions['level4'];  // decent sample, total hack
+
+    // ensure these regions are set to non-blocking
+    for(var i = 0; i < set.length; i++) {
+        var r = set[i];
+        this._unblockArea(r.x + 1, r.y + 1, r.w - 1, r.h - 1);
+    }
+
+    this._allRegions = regions;
+    this.regions = set;
+    console.log('\tRegions created', regions);
 
 };
 
-MapGen.prototype.generateWalls = function() {
+MapGen.prototype.generateDoorways = function() {
 
-    // outer walls first
-    for(var t = 0; t < this.size; t++) {
-        this.data[c(t,0)].blocking = true;
-        this.data[c(t,this.size-1)].blocking = true;
-        this.data[c(0,t)].blocking = true;
-        this.data[c(this.size-1,t)].blocking = true;
+    var regions = this._allRegions;
+    this.doors = [];
+    for (var l = MAX_RECURSIONS; l > -1; l--) {
+
+        if (!'level' + l in regions || typeof regions['level' + l] == 'undefined') continue;
+
+        var parents = regions['level' + l];
+
+        for (var k = 0; k < parents.length; k++) {
+            var kids = parents[k].childNodes;
+            if (kids.length == 0) continue;
+            if (parents[k].splitType) {
+
+                var cx1 = kids[0].x + Math.floor(kids[0].w / 2),
+                    cy1 = kids[0].y + Math.floor(kids[0].y / 2),
+                    cx2 = kids[1].x + Math.floor(kids[1].x / 2),
+                    cy2 = kids[1].y + Math.floor(kids[1].y / 2);
+
+                if (parents[k].splitType == 'horiz') {
+
+                    var xpos = rndInt(kids[0].x + 1, kids[0].x + kids[0].w - 2);
+                    var ypos = kids[1].y;
+
+                } else {
+                    var ypos = rndInt(kids[0].y + 1, kids[0].y + kids[0].h - 2);
+                    var xpos = kids[1].x;
+
+                }
+
+                var id = c(xpos, ypos);
+                this.doors[id] = { x: xpos, y: ypos };
+                this.data[id].blocking = false;
+                this.data[id].isDoor = true;
+            }
+
+        }
     }
 
-    // now do some simple BSP shit to divide up the space into rooms
-    //
+};
+
+MapGen.prototype.generateCollisionMap = function() {
+
 
 };
 
 MapGen.prototype.generate = function() {
     this.generateTerrain();
-    this.generateWalls();
+    this.generateAreas();
+    this.generateDoorways();
+    this.generateCollisionMap();
 };
 
 MapGen.prototype.exportJSON = function() {
+
+    console.log('Exporting generated JSON map data to tilemap...');
 
     var exp = {};
     exp.height = exp.width = this.size;
@@ -224,13 +311,15 @@ MapGen.prototype.exportJSON = function() {
 
     exp.layers.push(terrainLayer);
 
-    console.log('exported', exp);
+    console.log('\tExport complete');
 
     return exp;
 
 };
 
 MapGen.prototype.exportCSV = function() {
+
+    console.log('Exporting generated CSV map data to tilemap...');
 
     var exp = '';
 
@@ -243,7 +332,7 @@ MapGen.prototype.exportCSV = function() {
         }
         exp += row.join(',') + '\n';
     }
-    console.log('exported', exp);
+    console.log('\tExport complete');
     return exp;
 
 }

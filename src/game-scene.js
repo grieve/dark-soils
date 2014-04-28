@@ -56,6 +56,8 @@ GameScene.prototype.init = function(config){
         tileset: 'mapgen-tileset'
     });
 
+    this.tilemap.map.setCollision(0);
+
     this.sprites = [];
 
     this.player = new Player(this);
@@ -149,6 +151,8 @@ GameScene.prototype.update = function(){
     this.physics.arcade.collide(this.enemy, this.graves);
     this.physics.arcade.collide(this.player, this.enemy, this.enemyAttack, null, this);
     this.physics.arcade.collide(this.player, this.zombies, this.enemyAttack, null, this);
+    this.physics.arcade.collide(this.player, this.tilemap.layer, function() { console.log('collided'); }, null, this);
+
     this.player.update();
     if(this.enemy) this.enemy.update();
     this.player.essence.update();
@@ -271,7 +275,7 @@ GameScene.prototype.completedDig = function(){
     }
     this.digCount++;
 
-    var hole = this.add.sprite(this.player.body.x, this.player.body.y, 'hole', 0); 
+    var hole = this.add.sprite(this.player.body.x, this.player.body.y, 'hole', 0);
     hole.scale.x = hole.scale.y = 0.6;
     hole.anchor.set(0.5);
 

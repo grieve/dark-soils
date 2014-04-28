@@ -7949,7 +7949,7 @@ function() {
             c = c.trim();
             for (var g = [], h = c.split("\n"), i = h.length, j = 0, k = 0; k < h.length; k++) {
                 g[k] = [];
-                for (var l = h[k].split(","), m = 0; m < l.length; m++) g[k][m] = new b.Tile(0, parseInt(l[m], 10), m, k, d, e);
+                for (var l = h[k].split(","), m = 0; m < l.length; m++) g[k][m] = new b.Tile(f.layers[0], parseInt(l[m], 10), m, k, d, e);
                 0 === j && (j = l.length)
             }
             return f.name = a, f.width = j, f.height = i, f.tileWidth = d, f.tileHeight = e, f.widthInPixels = j * d, f.heightInPixels = i * e, f.layers[0].width = j, f.layers[0].height = i, f.layers[0].widthInPixels = f.widthInPixels, f.layers[0].heightInPixels = f.heightInPixels, f.layers[0].data = g, f
