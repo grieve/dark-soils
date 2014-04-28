@@ -3,12 +3,12 @@ var Phaser = require('phaser');
 var Assets = require('./assets');
 
 var Scenes = {
-    mapTest: require('./maptest-scene'),
-    game: require('./game-scene'),
-    title: require('./title-scene')
+    mapTest: require('./scenes/maptest-scene'),
+    game: require('./scenes/game-scene'),
+    title: require('./scenes/title-scene')
 };
 
-var Levels = require('./level-config');
+var Levels = require('./config/levels');
 
 
 var Game = function(){

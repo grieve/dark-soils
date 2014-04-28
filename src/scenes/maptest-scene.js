@@ -1,5 +1,5 @@
-var Scene = require('./scene');
-var MapGen = require('./mapgen');
+var Scene = require('./base');
+var MapGen = require('../mapgen');
 
 var MapTestScene = function(){
     Scene.prototype.constructor.call(this);

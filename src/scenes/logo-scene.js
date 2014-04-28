@@ -1,4 +1,4 @@
-var Scene = require('./scene');
+var Scene = require('./base');
 
 var LogoScene = function(opts){
     Scene.prototype.constructor.call(this, opts);

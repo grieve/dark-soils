@@ -1,4 +1,4 @@
-var Scene = require('./scene');
+var Scene = require('./base');
 
 var TitleScene = function(){
     Scene.prototype.constructor.call(this);
