@@ -23,7 +23,8 @@ var UI = {
 
 var Environment = {
 	Grave: require('../environ/grave'),
-	Treasure: require('../environ/treasure')
+	Treasure: require('../environ/treasure'),
+    Hole: require('../environ/hole')
 }
 
 var Powerups = {
@@ -250,6 +251,9 @@ GameScene.prototype.render = function(){
     //for (var idx = 0; idx < this.treasures.length; idx++){
     //    this.game.debug.body(this.treasures[idx]);
     //}
+    //for (var idx = 0; idx < this.holes.length; idx++){
+    //    this.game.debug.body(this.holes[idx]);
+    //}
     this.player.onRender();
     this.player.essence.render();
 };
@@ -274,11 +278,12 @@ GameScene.prototype.getDigArea = function(){
         };
     }
 
-    for (idx = 0; idx < this.holes.length; idx++){
-        if (this.player.overlap(this.holes[idx])){
-            return null;
-        }
-    }
+    var onHole = false
+    this.game.physics.arcade.overlap(this.player, this.holes, function(player, hole){
+        onHole = true;
+    }, null, this);
+
+    if (onHole) return null;
 
     // determine dynamically from terrain and contents
     var type = 'grass';
@@ -289,11 +294,9 @@ GameScene.prototype.getDigArea = function(){
         time: DigTimes[type]
     };
 
-    for (idx = 0; idx < this.treasures.length; idx++){
-        if(this.player.overlap(this.treasures[idx])){
-            digArea.reward = this.treasures[idx].contents;
-        }
-    }
+    this.game.physics.arcade.overlap(this.player, this.treasures, function(player, treasure){
+        digArea.reward = treasure.contents;
+    }, null, this);
 
     // guarantee reward the first time
     if (this.digCount == 0){
@@ -321,11 +324,9 @@ GameScene.prototype.completedDig = function(){
     }
     this.digCount++;
 
-    var hole = this.add.sprite(this.player.body.x, this.player.body.y, 'hole', 0);
-    hole.scale.x = hole.scale.y = 0.6;
-    hole.anchor.set(0.5);
-
+    var hole = new Environment.Hole(this, this.player.body.x, this.player.body.y);
     this.holes.push(hole);
+    this.add.existing(hole);
 
     this.game.physics.arcade.overlap(this.player, this.treasures, function(player, treasure){
         treasure.kill();
