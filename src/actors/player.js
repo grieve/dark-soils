@@ -174,6 +174,9 @@ Player.prototype.onReorderZ = function(){
     }
     this.bringToTop();
     this.timeSegment.bringToTop();
+    if(this.death){
+        this.death.bringToTop();
+    }
 };
 
 Player.prototype.onRender = function(){

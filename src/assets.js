@@ -10,6 +10,8 @@ var assets = {
         ['masks', 'img/alpha-masks2.png', 64, 64]
     ],
     spritesheets: [
+        ['essence-bar', 'img/life_bar.png', 624, 158],
+        ['essence-holder', 'img/life_holder.png', 624, 158],
         ['player', 'img/protagonist_walk.png', 144, 180],
         ['argos', 'img/ghost_dog.png', 128, 128],
         ['player_dead', 'img/protagonist_dead.png', 151, 151],
@@ -17,6 +19,7 @@ var assets = {
         ['zombie', 'img/zombie_anim.png', 144, 180],
         ['lost-soul', 'img/lost-soul.png', 120, 160],
         ['grave', 'img/grave.png', 195, 319],
+        ['dog-grave', 'img/dog-grave.png', 160, 300],
         ['heart', 'img/heart.png', 78, 99],
         ['bones', 'img/bones.png', 90, 85],
         ['finger', 'img/finger.png', 78, 89],
@@ -30,6 +33,7 @@ var assets = {
         ['timer', 'img/timer.png', 32, 32],
         ['hole', 'img/hole.png', 160, 80],
         ['glow', 'img/glow_pulse.png', 64, 64],
+        ['blood-particle', 'img/blood_particle.png', 7, 10],
         ['particle-map', 'img/particle-map.png', 3, 3],
 
     ],
