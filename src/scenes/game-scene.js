@@ -251,21 +251,23 @@ GameScene.prototype.render = function(){
 };
 
 GameScene.prototype.getDigArea = function(){
-    var idx;
-    for(idx = 0; idx < this.graves.length; idx++){
-        if (this.player.overlap(this.graves[idx])){
-            if (this.digCount < 5){
-                return null;
-            }
-            if (this.graves[idx].frame == 1){
-                return null;
-            }
-            return {
-                type: "grave",
-                grave: this.graves[idx],
-                time: DigTimes.grave
-            };
+    var onGrave = false;
+    this.game.physics.arcade.overlap(this.player, this.graves, function(player, grave){
+        onGrave = grave;
+    }, null, this);
+
+    if (onGrave){
+        if (this.digCount < 5){
+            return null;
         }
+        if (onGrave.frame == 1){
+            return null;
+        }
+        return {
+            type: "grave",
+            grave: onGrave,
+            time: DigTimes.grave
+        };
     }
 
     for (idx = 0; idx < this.holes.length; idx++){
@@ -333,7 +335,7 @@ GameScene.prototype.completedDig = function(){
 };
 
 GameScene.prototype.openGrave = function(grave){
-    grave.open();
+    grave.frame = 1;
     switch(grave.contents){
         case "zombie":
             this.spawnZombie(grave);

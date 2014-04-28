@@ -13,7 +13,7 @@ var Grave = function(scene, x, y, contents){
     this.grave.body.offset.x = 28;
     this.grave.body.offset.y = 50;
     this.grave.body.immovable = true;
-    this.grave.alpha = 0;
+    this.grave.contents = this.contents;
     this.add(this.grave);
 
     this.headstone = new Phaser.Sprite(scene.game, 0, 0, 'grave', 0);
@@ -22,6 +22,7 @@ var Grave = function(scene, x, y, contents){
     this.headstone.body.offset.x = 23;
     this.headstone.body.offset.y = 34;
     this.headstone.body.immovable = true;
+    this.headstone.alpha = 0;
     this.add(this.headstone);
 };
 
@@ -29,7 +30,7 @@ Grave.prototype = Object.create(Phaser.Group.prototype);
 Grave.prototype.constructor = Grave;
 
 Grave.prototype.open = function(){
-    this.frame = 1;
+    this.grave.frame = 1;
     console.log(this.contents);
 };
 
