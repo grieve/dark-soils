@@ -42,10 +42,12 @@ var Powerups = {
 
 
 var DigTimes = {
-    dirt: 1500,
-    grass: 2000,
-    stone: 3500,
-    grave: 5000
+    dirt: 2000,
+    grass: 3000,
+    transition: 3000,
+    gravel: 5000,
+    stone: 7500,
+    grave: 10000
 };
 
 var GameScene = function(){
@@ -286,7 +288,8 @@ GameScene.prototype.getDigArea = function(){
     if (onHole) return null;
 
     // determine dynamically from terrain and contents
-    var type = 'grass';
+    var type = this.tilemap.getTerrainAt(this.player.body.x, this.player.body.y);
+    console.log(type);
 
     var digArea = {
         type: type,
