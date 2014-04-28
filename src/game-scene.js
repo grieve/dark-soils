@@ -44,7 +44,7 @@ GameScene.prototype.init = function(config){
     var tileGen = new TileGen({
         game: this,
         terrainTypes: map.terrainTypes,
-        baseTile: 3,
+        baseTile: 6,
         tileImg: 'mapgen-tileset',
         maskImg: 'masks'
     });

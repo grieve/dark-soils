@@ -59,7 +59,7 @@ var TileGen = function(opts) {
         for(var i = 0; i < this.terrainTypes.length; i++) {
 
             var t = this.terrainTypes[i];
-            t.edgeStartIndex = i  * GEN_TILE_ROWS;
+            t.edgeStartIndex = (i  * GEN_TILE_ROWS) * GEN_TILE_COLS;
 
             terrainImg.copyPixels(this.tileImg, { x: TILE_SIZE * t.tile, y: 0, width: TILE_SIZE, height: TILE_SIZE }, 0, 0);
 
@@ -68,7 +68,7 @@ var TileGen = function(opts) {
 
                     maskImg.canvas.width = maskImg.canvas.height;
                     maskImg.copyPixels(this.maskImg, { x: c*TILE_SIZE, y: r*TILE_SIZE, width: TILE_SIZE, height: TILE_SIZE}, 0, 0);
-                    var comp = this._createComposite(this.baseImg, terrainImg, maskImg);
+                    var comp = this._createComposite(terrainImg, this.baseImg, maskImg);
 
                     var xpos = c * TILE_SIZE,
                     ypos = ((i * 2) + r) * TILE_SIZE;

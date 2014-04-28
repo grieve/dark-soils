@@ -172,16 +172,7 @@ MapGen.prototype._unblockArea = function(x, y, w, h) {
             this.data[c(px,py)].blocking = false;
         }
     }
-}
-
-MapGen.prototype.generateTileTransitions = function() {
-
-
-
-
-
-
-}
+};
 
 MapGen.prototype.generateAreas = function() {
 
@@ -295,6 +286,23 @@ MapGen.prototype.getAdjacentWallBits = function(x, y) {
 
 MapGen.prototype.getAdjacentDifferentBits = function(x, y) {
 
+    var linked = [
+        c(x-1, y),
+        c(x, y-1),
+        c(x+1, y),
+        c(x, y+1),
+    ];
+    var bits = [1,2,4,8];  // w, n, e, s - todo: should bitwise this or something
+    var total = 0;
+
+    var terrain = this.data[c(x,y)].terrain;
+
+    for(var i = 0; i < linked.length; i++) {
+        if(this.data[linked[i]] === undefined) continue;
+        if(this.data[linked[i]].terrain !== terrain) total += bits[i];
+    }
+
+    return total;
 
 
 };
@@ -314,11 +322,36 @@ MapGen.prototype.generateWalls = function() {
 
 };
 
+MapGen.prototype.generateTileTransitions = function() {
+
+    console.log('generateTileTransitions', this.terrainTypes);
+
+    for(var x = 0; x < MAP_SIZE; x++) {
+        for(var y = 0; y < MAP_SIZE; y++) {
+
+            var tile = this.data[c(x,y)];
+
+            if( tile.wallTile ) continue;
+
+            var bt = this.getAdjacentDifferentBits(x,y);
+
+            tile.transTile = 100 + this.terrainTypes[tile.terrain].edgeStartIndex + bt;
+
+        }
+    }
+
+
+
+
+};
+
+
 MapGen.prototype.generate = function() {
     this.generateTerrain();
     this.generateAreas();
     this.generateDoorways();
     this.generateWalls();
+    this.generateTileTransitions();
 };
 
 MapGen.prototype.exportJSON = function() {
@@ -372,12 +405,13 @@ MapGen.prototype.exportCSV = function() {
         var row = [];
         for(var x = 0; x < this.size; x++) {
             var tile = this.data[c(x,y)];
-            var tid = (tile.blocking) ? tile.wallTile : terrainTypes[tile.terrain].tile;
+            //if(tile.transTile) console.log('trans tile', x, y, tile.transTile);
+            var tid = (tile.blocking) ? tile.wallTile : tile.transTile || terrainTypes[tile.terrain].tile;
             row.push(tid);
         }
         exp += row.join(',') + '\n';
     }
-    console.log('\tExport complete');
+    console.log('\tExport complete', exp);
     return exp;
 
 }
