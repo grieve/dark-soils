@@ -338,17 +338,17 @@ GameScene.prototype.openGrave = function(grave){
     grave.frame = 1;
     switch(grave.contents){
         case "zombie":
-            this.spawnZombie(grave);
+            this.spawnZombie(grave.grp);
             if(this.firstZombie){
                 this.narrative.playChapter('zombie');
                 this.firstZombie = false;
             };
             break;
         case "heart":
-            this.spawnHeart(grave);
+            this.spawnHeart(grave.grp);
             break;
         case "lostsoul":
-            this.spawnLostSoul(grave);
+            this.spawnLostSoul(grave.grp);
             if(this.firstSoul){
                 this.narrative.playChapter('lostsoul');
                 this.firstSoul = false;

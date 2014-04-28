@@ -14,6 +14,7 @@ var Grave = function(scene, x, y, contents){
     this.grave.body.offset.y = 50;
     this.grave.body.immovable = true;
     this.grave.contents = this.contents;
+    this.grave.grp = this;
     this.add(this.grave);
 
     this.headstone = new Phaser.Sprite(scene.game, 0, 0, 'grave', 0);
