@@ -117,18 +117,21 @@ Player.prototype.startDig = function(){
         return;
     }
     this.digTimer = this.game.time.events.add(this.digArea.time, this.finishDig, this);
+    this.digAnimTimer = this.game.time.events.loop(150, function(){
+        this.scale.x *= -1;
+    }, this);
 
     this.digging = true;
     var particleMap = {
         'grass': [0, 1, 2, 3, 4],
         'grave': [10, 10, 10, 11, 11, 11, 12, 13, 14]
     };
-    this.digEmitter = this.game.add.emitter(0, 0, 1000);
-    this.digEmitter.setXSpeed(-120, 120);
-    this.digEmitter.setYSpeed(-160, -120);
+    this.digEmitter = this.game.add.emitter(0, 0, 2000);
+    this.digEmitter.setXSpeed(-150, 150);
+    this.digEmitter.setYSpeed(-210, -150);
     this.digEmitter.gravity = 300;
     this.digEmitter.makeParticles('particle-map', particleMap[this.digArea.type]);
-    this.digEmitter.start(false, 1000, 10);
+    this.digEmitter.start(false, 750, 1);
 
     this.timeSegment.revive();
     this.timeSegment.frame = 0;
@@ -136,6 +139,7 @@ Player.prototype.startDig = function(){
 
 Player.prototype.stopDig = function(){
     this.game.time.events.remove(this.digTimer);
+    this.game.time.events.remove(this.digAnimTimer);
     this.digEmitter.on = false;
     var oldEmitter = this.digEmitter;
     this.game.time.events.add(1000, function(){ oldEmitter.destroy();}, this);
@@ -144,6 +148,7 @@ Player.prototype.stopDig = function(){
 };
 
 Player.prototype.finishDig = function(){
+    this.game.time.events.remove(this.digAnimTimer);
     if(this.digArea.type == "grave"){
         this.scene.openGrave(this.digArea.grave);
     } else {
