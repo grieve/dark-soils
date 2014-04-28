@@ -235,8 +235,9 @@ GameScene.prototype.resolveZ = function(){
     }
 
     if(this.powerup) this.game.world.bringToTop(this.powerup);
-    this.player.essence.bringToTop();
+    this.game.world.bringToTop(this.player.essence);
     this.game.world.bringToTop(this.narrative);
+    this.game.world.bringToTop(this.notifications);
 };
 
 GameScene.prototype.render = function(){

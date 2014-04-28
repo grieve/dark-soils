@@ -10,6 +10,8 @@ var assets = {
         ['masks', 'img/alpha-masks2.png', 64, 64]
     ],
     spritesheets: [
+        ['essence-bar', 'img/life_bar.png', 624, 158],
+        ['essence-holder', 'img/life_holder.png', 624, 158],
         ['player', 'img/protagonist_walk.png', 144, 180],
         ['argos', 'img/ghost_dog.png', 128, 128],
         ['player_dead', 'img/protagonist_dead.png', 151, 151],
@@ -30,6 +32,7 @@ var assets = {
         ['timer', 'img/timer.png', 32, 32],
         ['hole', 'img/hole.png', 160, 80],
         ['glow', 'img/glow_pulse.png', 64, 64],
+        ['blood-particle', 'img/blood_particle.png', 7, 10],
         ['particle-map', 'img/particle-map.png', 3, 3],
 
     ],
