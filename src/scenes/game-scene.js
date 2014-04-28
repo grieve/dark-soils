@@ -7,6 +7,7 @@ var MapGen = require('../mapgen');
 
 var Actors = {
 	Player: require('../actors/player'),
+	Argos: require('../actors/argos'),
 	Enemy: require('../actors/enemy'),
 	Zombie: require('../actors/zombie'),
 	LostSoul: require('../actors/lost-soul')
@@ -230,6 +231,9 @@ GameScene.prototype.render = function(){
     //    this.game.debug.body(this.zombies[idx]);
     //}
     //
+    //for (var idx = 0; idx < this.treasures.length; idx++){
+    //    this.game.debug.body(this.treasures[idx]);
+    //}
     this.player.onRender();
     this.player.essence.render();
 };
@@ -305,16 +309,19 @@ GameScene.prototype.completedDig = function(){
 
     this.holes.push(hole);
 
-    for (var idx = 0; idx < this.treasures.length; idx++){
-        if(hole.overlap(this.treasures[idx])){
-            this.treasures[idx].kill();
+    this.game.physics.arcade.overlap(this.player, this.treasures, function(player, treasure){
+        treasure.kill();
+        for (var idx = 0; idx < this.treasures.length; idx++){
+            if (treasure == this.treasures[idx]){
+                this.treasures.splice(idx, 1);
+                break;
+            }
         }
-    }
+    }, null, this);
 };
 
 GameScene.prototype.openGrave = function(grave){
     grave.open();
-    console.log("--" + grave.contents + "--");
     switch(grave.contents){
         case "zombie":
             this.spawnZombie(grave);
@@ -342,9 +349,7 @@ GameScene.prototype.openGrave = function(grave){
 };
 
 GameScene.prototype.beaconTutorial = function(){
-    console.log('trying beacon');
     if (this.narrative.currentChapter !== null){
-        console.log('retrying beacon');
         return this.game.time.events.add(5000, this.beaconTutorial, this);
     }
 

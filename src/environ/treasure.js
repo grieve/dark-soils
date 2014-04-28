@@ -2,6 +2,7 @@ var Phaser = require('phaser');
 
 var Treasure = function(scene, x, y, contents){
     Phaser.Sprite.call(this, scene.game, x, y, 'glow', 0);
+    this.game.physics.enable(this, Phaser.Physics.ARCADE);
     this.contents = contents;
     this.anchor.set(0.5, 0.5);
 

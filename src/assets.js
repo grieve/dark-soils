@@ -11,6 +11,7 @@ var assets = {
     ],
     spritesheets: [
         ['player', 'img/protagonist_walk.png', 144, 180],
+        ['argos', 'img/ghost_dog.png', 128, 128],
         ['player_dead', 'img/protagonist_dead.png', 151, 151],
         ['enemy', 'img/villain_walk.png', 144, 180],
         ['zombie', 'img/zombie_anim.png', 144, 180],
