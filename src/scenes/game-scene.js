@@ -111,6 +111,7 @@ GameScene.prototype.init = function(config){
     this.treasures = [];
     this.zombies = [];
     this.graves = [];
+    this.headstones = [];
 
     this.plantGraves();
     this.plantTreasures();
@@ -138,7 +139,8 @@ GameScene.prototype.plantGraves = function(){
                 Math.random() * this.world.height,
                 type
             );
-            this.graves.push(grave);
+            this.graves.push(grave.grave);
+            this.headstones.push(grave.headstone);
             this.sprites.push(grave);
             this.add.existing(grave);
         }
@@ -178,8 +180,8 @@ GameScene.prototype.hideTreasures = function(){
 };
 
 GameScene.prototype.update = function(){
-    this.physics.arcade.collide(this.player, this.graves);
-    this.physics.arcade.collide(this.enemy, this.graves);
+    this.physics.arcade.collide(this.player, this.headstones);
+    this.physics.arcade.collide(this.enemy, this.headstones);
     this.physics.arcade.collide(this.player, this.enemy, this.enemyAttack, null, this);
     this.physics.arcade.collide(this.player, this.zombies, this.enemyAttack, null, this);
     this.physics.arcade.collide(this.player, this.tilemap.layer, function() { console.log('collided'); }, null, this);
@@ -221,7 +223,7 @@ GameScene.prototype.resolveZ = function(){
         if("onReorderZ" in this.sprites[idx]){
             this.sprites[idx].onReorderZ();
         } else {
-            this.sprites[idx].bringToTop();
+            this.game.world.bringToTop(this.sprites[idx]);
         }
     }
 
@@ -235,6 +237,7 @@ GameScene.prototype.render = function(){
     //this.game.debug.body(this.enemy);
     //for (var idx = 0; idx < this.graves.length; idx++){
     //    this.game.debug.body(this.graves[idx]);
+    //    this.game.debug.body(this.headstones[idx]);
     //}
     //for (var idx = 0; idx < this.zombies.length; idx++){
     //    this.game.debug.body(this.zombies[idx]);
