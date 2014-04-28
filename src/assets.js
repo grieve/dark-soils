@@ -19,6 +19,7 @@ var assets = {
         ['zombie', 'img/zombie_anim.png', 144, 180],
         ['lost-soul', 'img/lost-soul.png', 120, 160],
         ['grave', 'img/grave.png', 195, 319],
+        ['dog-grave', 'img/dog-grave.png', 160, 300],
         ['heart', 'img/heart.png', 78, 99],
         ['bones', 'img/bones.png', 90, 85],
         ['finger', 'img/finger.png', 78, 89],

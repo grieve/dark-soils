@@ -23,6 +23,7 @@ var UI = {
 
 var Environment = {
 	Grave: require('../environ/grave'),
+	DogGrave: require('../environ/dog-grave'),
 	Treasure: require('../environ/treasure'),
     Hole: require('../environ/hole'),
     Rain: require('../environ/rain')
@@ -101,7 +102,6 @@ GameScene.prototype.init = function(config){
         this.world.centerY
     );
     this.add.existing(this.player);
-
     this.camera.focusOn(this.player);
     this.camera.follow(this.player, Phaser.Camera.FOLLOW_TOPDOWN);
 
@@ -138,6 +138,14 @@ GameScene.prototype.init = function(config){
     }, this);
 
     this.digCount = 0;
+
+    // test argos
+
+    this.argosGrave = new Environment.DogGrave(this, this.player.x + 200, this.player.y);
+    this.sprites.push(this.argosGrave);
+    this.add.existing(this.argosGrave);
+    this.graves.push(this.argosGrave.grave);
+
 };
 
 GameScene.prototype.plantGraves = function(){
@@ -192,7 +200,10 @@ GameScene.prototype.hideTreasures = function(){
 
 GameScene.prototype.update = function(){
     this.physics.arcade.collide(this.player, this.headstones);
+    this.physics.arcade.collide(this.player, this.argosGrave.headstone);
     this.physics.arcade.collide(this.enemy, this.headstones);
+    this.physics.arcade.collide(this.enemy, this.argosGrave.headstone);
+    this.physics.arcade.collide(this.argosGrave.headstone, this.zombies);
     this.physics.arcade.collide(this.player, this.enemy, this.enemyAttack, null, this);
     this.physics.arcade.collide(this.player, this.zombies, this.enemyAttack, null, this);
     this.physics.arcade.collide(this.player, this.tilemap.layer, function() { console.log('collided'); }, null, this);
@@ -227,7 +238,9 @@ GameScene.prototype.destroy = function(){
 
 GameScene.prototype.resolveZ = function(){
     this.sprites.sort(function(a,b){
-        return a.y - b.y;
+        var ay = 'headstone' in a ? a.y + a.headstone.body.offset.y: a.y;
+        var by = 'headstone' in b ? b.y + b.headstone.body.offset.y: b.y;
+        return ay - by;
     });
 
     for (var idx = 0; idx < this.sprites.length; idx++){
@@ -261,6 +274,9 @@ GameScene.prototype.render = function(){
     //for (var idx = 0; idx < this.holes.length; idx++){
     //    this.game.debug.body(this.holes[idx]);
     //}
+    //
+    //this.game.debug.body(this.argosGrave.headstone);
+    //this.game.debug.body(this.argosGrave.grave);
     this.player.onRender();
     this.player.essence.render();
 };
@@ -367,6 +383,10 @@ GameScene.prototype.openGrave = function(grave){
                 this.firstSoul = false;
             };
             break;
+        case "argos":
+            this.spawnArgos(grave.grp);
+            //this.narrative.playChapter('argos');
+            break;
         case "nothing":
             if(this.firstNothing){
                 this.narrative.playChapter('nothing');
@@ -442,6 +462,14 @@ GameScene.prototype.spawnPowerup = function(x, y, type){
     console.log("Found " + this.powerup.label + "[" + this.powerup.effect + "]");
     this.notifications.addMessage("Found " + this.powerup.label);
     this.notifications.addMessage(this.powerup.effect);
+};
+
+GameScene.prototype.spawnArgos = function(grave){
+    this.argos = new Actors.Argos(this);
+    this.argos.x = grave.x;
+    this.argos.y = grave.y + 100;
+    this.argos.setTarget(this.player);
+    this.add.existing(this.argos);
 };
 
 module.exports = GameScene;

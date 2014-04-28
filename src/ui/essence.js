@@ -5,7 +5,7 @@ var Essence = function(scene){
     this.bar = new Phaser.Sprite(scene.game, 12, this.game.height - 170, 'essence-bar', 0);
     this.holder = new Phaser.Sprite(scene.game, 12, this.game.height - 170, 'essence-holder', 0);
     this.baseValue = this.value = 10000;
-    this.baseDrain = this.drain = 1;
+    this.baseDrain = this.drain = 0.6;
     this.fixedToCamera = true;
 
     this.cropRect = new Phaser.Rectangle(0, 0, this.bar.width, this.bar.height);
