@@ -16,6 +16,7 @@ var Actors = {
 var UI = {
 	Essence: require('../ui/essence'),
 	Light: require('../ui/light'),
+    Vignette: require('../ui/vignette'),
 	Narrative: require('../ui/narrative'),
     Notifications: require('../ui/notifications')
 };
@@ -115,6 +116,9 @@ GameScene.prototype.init = function(config){
 
     this.plantGraves();
     this.plantTreasures();
+
+    this.vignette = new UI.Vignette(this.game, { id: 'screenfade' });
+    this.add.existing(this.vignette);
 
     this.player.essence = new UI.Essence(this);
     this.add.existing(this.player.essence);
