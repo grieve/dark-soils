@@ -56,7 +56,7 @@ GameScene.prototype.init = function(config){
         tileset: 'mapgen-tileset'
     });
 
-    this.tilemap.map.setCollision(0);
+    this.tilemap.map.setCollisionBetween(20,40);
 
     this.sprites = [];
 

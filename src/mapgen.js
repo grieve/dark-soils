@@ -264,8 +264,36 @@ MapGen.prototype.generateDoorways = function() {
 
 };
 
-MapGen.prototype.generateCollisionMap = function() {
+MapGen.prototype.getAdjacentWallBits = function(x, y) {
 
+    var linked = [
+        c(x, y-1),
+        c(x-1, y),
+        c(x+1, y),
+        c(x, y+1),
+    ];
+    var bits = [1,2,4,8];  // n, w, e, s - todo: should bitwise this or something
+    var total = 0;
+
+    for(var i = 0; i < linked.length; i++) {
+        if(this.data[linked[i]] === undefined) continue;
+        if(this.data[linked[i]].blocking) total += bits[i];
+    }
+    return total;
+};
+
+MapGen.prototype.generateWalls = function() {
+
+    for(var x = 0; x < MAP_SIZE; x++) {
+        for(var y = 0; y < MAP_SIZE; y++) {
+
+            if( this.data[c(x,y)].blocking === false ) continue;
+
+            var bt = this.getAdjacentWallBits(x,y);
+            this.data[c(x,y)].wallTile = 20 + bt;
+
+        }
+    }
 
 };
 
@@ -273,7 +301,7 @@ MapGen.prototype.generate = function() {
     this.generateTerrain();
     this.generateAreas();
     this.generateDoorways();
-    this.generateCollisionMap();
+    this.generateWalls();
 };
 
 MapGen.prototype.exportJSON = function() {
@@ -327,7 +355,7 @@ MapGen.prototype.exportCSV = function() {
         var row = [];
         for(var x = 0; x < this.size; x++) {
             var tile = this.data[c(x,y)];
-            var tid = (tile.blocking) ? 0 : terrainTypes[tile.terrain].tile;
+            var tid = (tile.blocking) ? tile.wallTile : terrainTypes[tile.terrain].tile;
             row.push(tid);
         }
         exp += row.join(',') + '\n';
