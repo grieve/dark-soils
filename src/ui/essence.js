@@ -10,8 +10,8 @@ var Essence = function(scene){
 
     this.cropRect = new Phaser.Rectangle(0, 0, this.bar.width, this.bar.height);
 
-    this.add(this.bar);
     this.add(this.holder);
+    this.add(this.bar);
 
     this.emitter = this.game.add.emitter(110, this.game.height - 110, 200);
     this.emitter.setXSpeed(0, 0);
