@@ -252,9 +252,11 @@ GameScene.prototype.resolveZ = function(){
     }
 
     if(this.powerup) this.game.world.bringToTop(this.powerup);
-    this.game.world.bringToTop(this.player.essence);
     this.game.world.bringToTop(this.narrative);
     this.game.world.bringToTop(this.notifications);
+    this.game.world.bringToTop(this.rain);
+    this.game.world.bringToTop(this.vignette);
+    this.game.world.bringToTop(this.player.essence);
 };
 
 GameScene.prototype.render = function(){
