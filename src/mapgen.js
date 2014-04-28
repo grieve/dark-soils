@@ -182,7 +182,7 @@ MapGen.prototype.generateAreas = function() {
     var bspTree = new BSPNode(0, 0, MAP_SIZE - 1, MAP_SIZE - 1, MIN_REGION_SIZE);
     bspTree.splitRandomRecursive(MAX_RECURSIONS);
 
-    console.log('\tBSP tree created', bspTree);
+    console.log('\tBSP tree created');
 
     // get the distinct regions from the BSP split
     regions = {};
@@ -219,7 +219,7 @@ MapGen.prototype.generateAreas = function() {
 
     this._allRegions = regions;
     this.regions = set;
-    console.log('\tRegions created', regions);
+    console.log('\tRegions created');
 
 };
 
@@ -309,6 +309,8 @@ MapGen.prototype.getAdjacentDifferentBits = function(x, y) {
 
 MapGen.prototype.generateWalls = function() {
 
+    console.log('Adding wall segments to map...');
+
     for(var x = 0; x < MAP_SIZE; x++) {
         for(var y = 0; y < MAP_SIZE; y++) {
 
@@ -324,7 +326,7 @@ MapGen.prototype.generateWalls = function() {
 
 MapGen.prototype.generateTileTransitions = function() {
 
-    console.log('generateTileTransitions', this.terrainTypes);
+    console.log('Adding tile transitions to map...');
 
     for(var x = 0; x < MAP_SIZE; x++) {
         for(var y = 0; y < MAP_SIZE; y++) {
@@ -411,7 +413,7 @@ MapGen.prototype.exportCSV = function() {
         }
         exp += row.join(',') + '\n';
     }
-    console.log('\tExport complete', exp);
+    console.log('\tExport complete');
     return exp;
 
 }
