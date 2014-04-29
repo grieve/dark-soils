@@ -44,22 +44,22 @@ var Powerups = {
 
 
 var DigTimes = {
-    dirt: 2000,
+    soil: 2000,
     grass: 3000,
     transition: 3000,
     water: 4000,
-    gravel: 5000,
-    stone: 7500,
+    mud: 5000,
+    rock: 7500,
     grave: 10000
 };
 
 var DigChances = {
-    dirt: [0.1, 0.3],
+    soil: [0.1, 0.3],
     grass: [0.2, 0.45],
     transition: [0.2, 0.2],
     water: [0.25, 0.3],
-    gravel: [0.3, 0.5],
-    stone: [0.4, 0.6]
+    mud: [0.3, 0.5],
+    rock: [0.4, 0.6]
 };
 
 var GameScene = function(){
@@ -186,13 +186,23 @@ GameScene.prototype.plantGraves = function(){
 };
 
 GameScene.prototype.plantTreasures = function(){
-    var treasure;
+    var terrainArrays = {
+        soil: this.mapGen.getTerrainIndexes('soil'),
+        grass: this.mapGen.getTerrainIndexes('grass'),
+        water: this.mapGen.getTerrainIndexes('water'),
+        mud: this.mapGen.getTerrainIndexes('mud'),
+        rock: this.mapGen.getTerrainIndexes('rock')
+    };
+
+    var treasure, terrain, tile;
     for(var type in this.config.treasures){
-        for (var idx = 0; idx < this.config.treasures[type]; idx++){
+        for (var idx = 0; idx < this.config.treasures[type].num; idx++){
+            terrain = this.expectation(this.config.treasures[type].terrain);
+            tile = terrainArrays[terrain][Math.floor(Math.random()*terrainArrays[terrain].length)];
             treasure = new Environment.Treasure(
                 this,
-                Math.random() * this.world.width,
-                Math.random() * this.world.height,
+                tile.x * 64,
+                tile.y * 64,
                 type
             );
             this.treasures.push(treasure);
@@ -500,6 +510,21 @@ GameScene.prototype.spawnArgos = function(grave){
     this.argos.y = grave.y + 100;
     this.argos.setTarget(this.player);
     this.add.existing(this.argos);
+};
+
+GameScene.prototype.expectation = function(options){
+    var sum = 0;
+    var key;
+    for (key in options){
+        sum += options[key];
+    }
+    for (key in options){
+        if (Math.random() < options[key]/sum){
+            return key;
+        } else {
+            sum -= options[key];
+        }
+    }
 };
 
 module.exports = GameScene;
