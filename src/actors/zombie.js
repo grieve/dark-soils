@@ -42,11 +42,12 @@ Zombie.prototype.attack = function(target){
         return false;
     }
     target.essence.value -= 1000;
+    this.scene.notifications.addMessage('Essence stolen', true);
+    target.hurtAnim(this);
     this.attacking = true;
     this.play('attack');
     this.game.time.events.add(2000, function(){
         this.attacking = false;
-        this.scene.notifications.addMessage('Essence stolen', true);
         this.play('walk');
     }, this);
 };

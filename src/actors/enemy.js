@@ -40,6 +40,7 @@ Enemy.prototype.attack = function(target){
     this.game.time.events.add(500, function(){
         target.essence.value -= 4000;
         this.scene.notifications.addMessage('Essence stolen', true);
+        target.hurtAnim(this);
     }, this);
     this.game.time.events.add(2000, function(){
         this.attacking = false;

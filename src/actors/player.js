@@ -19,6 +19,12 @@ var Player = function(scene){
     this.digEmitter.setYSpeed(-160, -120);
     this.digEmitter.gravity = 300;
 
+    this.bloodEmitter = this.game.add.emitter(this.x, this.y, 2000);
+    this.bloodEmitter.setXSpeed(-100, 100);
+    this.bloodEmitter.setYSpeed(-100, 100);
+    this.bloodEmitter.gravity = 300;
+    this.bloodEmitter.makeParticles('blood-particle');
+
     this.scene = scene;
 
     this.timeSegment = this.game.add.sprite(0, 0, 'timer', 0);
@@ -177,6 +183,8 @@ Player.prototype.onReorderZ = function(){
     if(this.death){
         this.death.bringToTop();
     }
+
+    this.game.world.bringToTop(this.bloodEmitter);
 };
 
 Player.prototype.onRender = function(){
@@ -196,6 +204,28 @@ Player.prototype.dieAnim = function(){
         this.scene.narrative.playChapter('death');
         this.kill();
     }
+};
+
+Player.prototype.hurtAnim = function(enemy){
+    if (this.digging) this.stopDig();
+    this.bloodEmitter.x = this.x;
+    this.bloodEmitter.y = this.y;
+    this.bloodEmitter.start(true, 500, null, 20);
+
+    var delta = {
+        x: enemy.x - this.x,
+        y: enemy.y - this.y
+    };
+
+    var total = Math.abs(delta.x) + Math.abs(delta.y);
+    var ratio = {
+        x: -delta.x/total,
+        y: -delta.y/total
+    };
+    this.body.velocity.x = 750 * ratio.x;
+    this.body.velocity.y = 750 * ratio.y;
+
+
 };
 
 module.exports = Player;
