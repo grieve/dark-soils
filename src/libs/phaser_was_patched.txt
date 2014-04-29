@@ -1,0 +1,3 @@
+Had to patch a bug in CSV tilemap collision: https://github.com/photonstorm/phaser/issues/692
+
+Fixed in the dev version of Phaser, so may not be an issue later.
