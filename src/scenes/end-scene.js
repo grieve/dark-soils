@@ -23,7 +23,7 @@ TitleScene.prototype.create = function(){
     time.anchor.setTo(0.5);
     score = this.add.text(400, this.game.height*0.5 + 200, 'You collected ' + window.essence + ' essence', style);
     score.anchor.setTo(0.5);
-    text = this.add.text(400, this.game.height*0.5 + 280, 'Click to play again', style);
+    text = this.add.text(400, this.game.height*0.5 + 280, 'Hit Space to play again', style);
     text.anchor.setTo(0.5);
 };
 
@@ -31,7 +31,7 @@ TitleScene.prototype.update = function(){
     this.logo.x = this.game.width*0.5 + Math.random()*10 - 5;
     this.logo.y = this.game.height*0.5 + Math.random()*10 - 5;
 
-    if (this.input.mousePointer.justReleased()){
+    if (this.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)){
         this.game.nextLevel();
     }
 };

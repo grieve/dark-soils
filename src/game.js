@@ -51,6 +51,14 @@ Game.prototype.onCreate = function(){
     this.state.start((getURLParam('scene') || 'title') + '-scene', true, false, Levels[0]);
 };
 
+Game.prototype.onPaused = function() {
+    console.log('PAUSED');
+};
+
+Game.prototype.onResume = function() {
+    console.log('RESUME');
+};
+
 Game.prototype.nextLevel = function(){
 
     this.state.start('game-scene', true, false, Levels[0 /*this.currentLevel++*/]);

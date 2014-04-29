@@ -14,11 +14,21 @@ body {
         width: 100%;
     }
 
-    .panel {
+    #instructions {
         width: 100%;
-        max-width: 640px;
-        background: $focused-color;
-        border-radius: 2px;
-        box-shadow: 2px 2px 1px rgba(0,0,0,0.3);
+        max-width: 800px;
+        color: $instructions-color;
+
+        .panel {
+
+            display: inline-block;
+            width: 35%;
+            padding: 5%;
+            font-family: monospace;
+
+        }
+
     }
+
+
 }
