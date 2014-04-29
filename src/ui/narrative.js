@@ -32,7 +32,7 @@ Narrative.prototype.playChapter = function(name){
 
 Narrative.prototype.writeLine = function(){
     var script = this.currentChapter[this.currentLine++];
-    console.log(script);
+    if (!script) return;
     var insev = script.severity;
     var outsev = script.severity;
     if (this.currentLine == this.currentChapter.length){

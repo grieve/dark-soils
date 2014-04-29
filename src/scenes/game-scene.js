@@ -148,7 +148,7 @@ GameScene.prototype.init = function(config){
         this.narrative.playChapter('intro');
     }, this);
 
-    this.digCount = 0;
+    this.digCount = 10;
 
     //test zombie
     //this.spawnZombie(this.player);
@@ -481,7 +481,7 @@ GameScene.prototype.spawnGroundskeeper = function(){
 GameScene.prototype.spawnZombie = function(grave){
     var zombie = new Actors.Zombie(this);
     zombie.setTarget(this.player);
-    zombie.setPosition(grave.x, grave.y + 100);
+    zombie.setPosition(grave.x + 70, grave.y + 100);
     this.sprites.push(zombie);
     this.zombies.push(zombie);
     this.add.existing(zombie);
@@ -490,13 +490,13 @@ GameScene.prototype.spawnZombie = function(grave){
 GameScene.prototype.spawnLostSoul = function(grave){
     var lostSoul = new Actors.LostSoul(this);
     lostSoul.setTarget(this.enemy);
-    lostSoul.setPosition(grave.x, grave.y + 100);
+    lostSoul.setPosition(grave.x + 70, grave.y + 100);
     this.sprites.push(lostSoul);
     this.add.existing(lostSoul);
 };
 
 GameScene.prototype.spawnHeart = function(grave){
-    this.spawnPowerup(grave.x, grave.y, 'Heart');
+    this.spawnPowerup(grave.x + 70, grave.y, 'Heart');
 };
 
 GameScene.prototype.spawnPowerup = function(x, y, type){
