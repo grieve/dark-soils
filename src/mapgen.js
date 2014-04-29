@@ -70,7 +70,9 @@ var MapTile = function(opts) {
 var MapGen = function(opts){
 
     opts = (opts == undefined) ? {} : opts;
+
     this.size = opts.size || MAP_SIZE;
+    this.tileSize = opts.tileSize || TILE_SIZE;
 
     this.init();
 

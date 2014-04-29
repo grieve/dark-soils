@@ -245,6 +245,7 @@ GameScene.prototype.update = function(){
     this.physics.arcade.collide(this.player, this.enemy, this.enemyAttack, null, this);
     this.physics.arcade.collide(this.player, this.zombies, this.enemyAttack, null, this);
     this.physics.arcade.collide(this.player, this.tilemap.layer);
+    this.physics.arcade.collide(this.enemy, this.tilemap.layer, this.enemyTeleport, null, this);
 
     this.player.update();
     if(this.enemy) this.enemy.update();
@@ -267,6 +268,10 @@ GameScene.prototype.update = function(){
 
 GameScene.prototype.enemyAttack = function(player, enemy){
     enemy.attack(player);
+};
+
+GameScene.prototype.enemyTeleport = function(enemy) {
+    enemy.teleport();
 };
 
 GameScene.prototype.destroy = function(){
