@@ -13,14 +13,7 @@ TILE_SIZE = 64,
 MAX_RECURSIONS = 4,
 TERRAIN_NUM_AREAS = 40;
 
-var terrainTypes = [
-    { name: 'water', tile: 5, min: -1, max: -0.9},
-    { name: 'mud', tile: 4, min: -0.98, max: -0.7},
-    { name: 'soil',  tile: 3, min: -0.69, max: -0.5},
-    { name: 'ground', tile: 1, min: -0.4, max:0.6},
-    { name: 'rock', tile: 2, min: 0.61, max:0.9},
-    //{ name: 'grave', tile: 6, min: 0.91, max: 1}
-];
+var terrainTypes;
 
 /**
  * Util methods
@@ -76,8 +69,9 @@ var MapTile = function(opts) {
 
 var MapGen = function(opts){
 
-    this.size = MAP_SIZE;
-    this.terrainTypes = terrainTypes;
+    opts = (opts == undefined) ? {} : opts;
+    this.size = opts.size || MAP_SIZE;
+
     this.init();
 
 };
@@ -85,7 +79,50 @@ var MapGen = function(opts){
 MapGen.prototype.init = function() {
 
     this.data = {};
+    this.regions = [];
+    this._allRegions = [];
 
+    terrainTypes = [
+        { name: 'water', tile: 5, indexes: [] },
+        { name: 'mud', tile: 4, indexes: [] },
+        { name: 'soil',  tile: 3, indexes: [] },
+        { name: 'grass', tile: 1, indexes: [] },
+        { name: 'rock', tile: 2, indexes: [] }
+    ];
+    this.terrainTypes = terrainTypes;
+
+};
+
+MapGen.prototype.getRegions = function() {
+
+    var rs = [];
+    for(var i = 0; i < this.regions.length; i++) {
+        var r = this.regions[i];
+        rs.push({
+            x: r.x,
+            y: r.y,
+            width: r.w,
+            height: r.h
+        });
+    }
+    return rs;
+};
+
+MapGen.prototype.getTerrainIndexes = function(terrainName) {
+    console.log('terrainIndexes', terrainName, this.terrainTypes);
+    var tobj;
+    for(var i = 0; i < this.terrainTypes.length; i++) {
+        if(this.terrainTypes[i].name == terrainName) {
+            tobj = this.terrainTypes[i];
+            break;
+        }
+    }
+    return tobj.indexes;
+
+};
+
+MapGen.prototype.getTile = function(x, y) {
+    return this.data[c(x,y)];
 };
 
 /**
@@ -97,7 +134,7 @@ MapGen.prototype.generateTerrain = function() {
     console.log('Generating level terrain...');
 
     // create a series of randomly distributed grid floats
-    var points = _createRegionPoints(MAP_SIZE, MAP_SIZE, TERRAIN_NUM_AREAS);
+    var points = _createRegionPoints(this.size, this.size, TERRAIN_NUM_AREAS);
 
     // now assign a random terrain type to each region spawn point
     for(var i = 0; i < points.length; i++) {
@@ -129,6 +166,7 @@ MapGen.prototype.generateTerrain = function() {
                 y: y,
                 terrain: closest.terrain
             });
+
         }
     }
 
@@ -150,21 +188,6 @@ var _createRegionPoints = function(w, h, numRegions) {
 
 };
 
-MapGen.prototype.generateROTMap = function() {
-
-    var map = new ROT.Map.Digger(this.size, this.size, {
-        roomWidth: [ROOM_SIZE_MIN, ROOM_SIZE_MAX],
-        roomHeight: [ROOM_SIZE_MIN, ROOM_SIZE_MAX],
-        dugPercentage: 0.9,
-        timeLimit: 4000
-    });
-    var self = this;
-    map.create(function(x, y, v) {
-        self.data[c(x,y)].blocking = v;
-    });
-
-};
-
 MapGen.prototype._unblockArea = function(x, y, w, h) {
     for(var px = x; px < x + w; px++) {
         for(var py = y; py < y + h; py++) {
@@ -179,7 +202,7 @@ MapGen.prototype.generateAreas = function() {
     console.log('Generating level areas...');
     // Assuming a virtual area the size of our map
     // do some crude BSP shit to divide up the area into regions
-    var bspTree = new BSPNode(0, 0, MAP_SIZE - 1, MAP_SIZE - 1, MIN_REGION_SIZE);
+    var bspTree = new BSPNode(0, 0, this.size - 1, this.size - 1, MIN_REGION_SIZE);
     bspTree.splitRandomRecursive(MAX_RECURSIONS);
 
     console.log('\tBSP tree created');
@@ -308,13 +331,18 @@ MapGen.prototype.generateWalls = function() {
 
     console.log('Adding wall segments to map...');
 
-    for(var x = 0; x < MAP_SIZE; x++) {
-        for(var y = 0; y < MAP_SIZE; y++) {
+    for(var x = 0; x < this.size; x++) {
+        for(var y = 0; y < this.size; y++) {
 
-            if( this.data[c(x,y)].blocking === false ) continue;
+            var tile = this.data[c(x,y)];
+
+            if( ! (tile.blocking) ) {
+                this.terrainTypes[tile.terrain].indexes.push({ x: x, y: y});
+                continue;
+            }
 
             var bt = this.getAdjacentWallBits(x,y);
-            this.data[c(x,y)].wallTile = 20 + bt;
+            tile.wallTile = 20 + bt;
 
         }
     }
@@ -325,8 +353,8 @@ MapGen.prototype.generateTileTransitions = function() {
 
     console.log('Adding tile transitions to map...');
 
-    for(var x = 0; x < MAP_SIZE; x++) {
-        for(var y = 0; y < MAP_SIZE; y++) {
+    for(var x = 0; x < this.size; x++) {
+        for(var y = 0; y < this.size; y++) {
 
             var tile = this.data[c(x,y)];
 
@@ -338,10 +366,6 @@ MapGen.prototype.generateTileTransitions = function() {
 
         }
     }
-
-
-
-
 };
 
 
@@ -351,47 +375,6 @@ MapGen.prototype.generate = function() {
     this.generateDoorways();
     this.generateWalls();
     this.generateTileTransitions();
-};
-
-MapGen.prototype.exportJSON = function() {
-
-    console.log('Exporting generated JSON map data to tilemap...');
-
-    var exp = {};
-    exp.height = exp.width = this.size;
-    exp.orientation = 'orthogonal';
-    exp.tileHeight = exp.tileWidth = TILE_SIZE;
-    exp.version = 1;
-    exp.properties = {};
-    exp.layers = [];
-
-    // tileset setup
-    exp.tilesets = [];
-
-    // terrain
-    var terrainLayer = {};
-    terrainLayer.height = terrainLayer.width = this.size;
-    terrainLayer.opacity = 1;
-    terrainLayer.type = 'tilelayer';
-    terrainLayer.name = 'Terrain Layer 1';
-    terrainLayer.visible = true;
-    terrainLayer.x = terrainLayer.y = 0;
-    terrainLayer.data = [];
-
-    for(var x = 0; x < this.size; x++) {
-        for(var y = 0; y < this.size; y++) {
-            var tile = this.data[c(x,y)];
-            var tid = tile.terrain; //(tile.blocking) ? null : tile.terrain;
-            terrainLayer.data.push(tid);
-        }
-    }
-
-    exp.layers.push(terrainLayer);
-
-    console.log('\tExport complete');
-
-    return exp;
-
 };
 
 MapGen.prototype.exportCSV = function() {
