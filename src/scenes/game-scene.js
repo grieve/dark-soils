@@ -74,6 +74,8 @@ GameScene.prototype.create = function(){
 };
 
 GameScene.prototype.init = function(config){
+    window.startTime = this.game.time.now;
+    window.essence = 0;
     this.config = config;
 
     this.mapGen = new MapGen();
@@ -252,7 +254,7 @@ GameScene.prototype.update = function(){
     if(this.player.essence.value <= 0){
         this.player.dieAnim();
         this.game.time.events.add(10000, function(){
-            this.game.state.start('title-scene');
+            this.game.state.start('end-scene');
         }, this);
     }
 
@@ -503,6 +505,7 @@ GameScene.prototype.spawnPowerup = function(x, y, type){
     this.powerup = new Powerups[type](this, x, y);
     this.add.existing(this.powerup);
     this.powerup.applyEffect(this.player);
+    window.essence += this.powerup.benefit;
     if (this.powerup.label instanceof Array){
         this.notifications.addMessage("Found " +
             this.powerup.label[Math.floor(Math.random()*this.powerup.label.length)]
