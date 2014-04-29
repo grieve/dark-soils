@@ -47,6 +47,8 @@ Game.prototype.onCreate = function(){
         return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
     }
 
+    this.input.keyboard.addKeyCapture(Phaser.Keyboard.SPACEBAR);
+
     this.physics.startSystem(Phaser.Physics.ARCADE);
     this.state.start((getURLParam('scene') || 'title') + '-scene', true, false, Levels[0]);
 };
