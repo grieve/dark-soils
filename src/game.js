@@ -5,7 +5,8 @@ var Assets = require('./assets');
 var Scenes = {
     mapTest: require('./scenes/maptest-scene'),
     game: require('./scenes/game-scene'),
-    title: require('./scenes/title-scene')
+    title: require('./scenes/title-scene'),
+    end: require('./scenes/end-scene')
 };
 
 var Levels = require('./config/levels');
@@ -34,6 +35,7 @@ Game.prototype.onCreate = function(){
 
     this.state.add('map-scene', new Scenes.mapTest(), false);
     this.state.add('title-scene', new Scenes.title(), false);
+    this.state.add('end-scene', new Scenes.end(), false);
     this.state.add('game-scene', new Scenes.game(), false);
 
     this.currentLevel = 0;
