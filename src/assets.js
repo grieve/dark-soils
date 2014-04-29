@@ -16,7 +16,7 @@ var assets = {
         ['argos', 'img/ghost_dog.png', 128, 128],
         ['player_dead', 'img/protagonist_dead.png', 151, 151],
         ['enemy', 'img/villain_walk.png', 144, 180],
-        ['zombie', 'img/zombie_anim.png', 144, 180],
+        ['zombie', 'img/zombie_anim.png', 180, 180],
         ['lost-soul', 'img/lost-soul.png', 120, 160],
         ['grave', 'img/grave.png', 195, 319],
         ['dog-grave', 'img/dog-grave.png', 160, 300],

@@ -5,12 +5,12 @@ var Zombie = function(scene){
     this.game.physics.enable(this, Phaser.Physics.ARCADE);
     this.body.setSize(this.width*0.32, this.height*0.2, 0, this.height*0.2);
     this.scale.x = this.scale.y = this.baseScale = 0.6;
-    this.anchor.setTo(0.35, 0.5);
+    this.anchor.setTo(0.5, 0.5);
     this.speed = Math.random()*10 + 15;
 
     this.animations.add('stand', [0], 8, true);
     this.animations.add('walk', [0, 1, 2], 5, true);
-    this.animations.add('attack', [0, 0, 1, 1, 3, 3, 3, 1], 8, false);
+    this.animations.add('attack', [3, 8, 9, 10, 11, 12, 13, 14, 15, 8, 3, 0], 12, false);
 
     this.play('walk');
     this.scene = scene;
@@ -41,11 +41,13 @@ Zombie.prototype.attack = function(target){
     if (this.attacking){
         return false;
     }
-    target.essence.value -= 1000;
-    this.scene.notifications.addMessage('Essence stolen', true);
-    target.hurtAnim(this);
     this.attacking = true;
     this.play('attack');
+    this.game.time.events.add(550, function(){
+        target.essence.value -= 1000;
+        this.scene.notifications.addMessage('Essence stolen', true);
+        target.hurtAnim(this);
+    }, this);
     this.game.time.events.add(2000, function(){
         this.attacking = false;
         this.play('walk');
