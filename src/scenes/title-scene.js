@@ -18,7 +18,7 @@ TitleScene.prototype.create = function(){
         strokeThickness: 1,
         align: "center"
     };
-    text = this.add.text(400, this.game.height*0.5 + 100, 'Click to play', style);
+    text = this.add.text(400, this.game.height*0.5 + 100, 'Hit Space to play', style);
     text.anchor.setTo(0.5);
 };
 
@@ -26,7 +26,7 @@ TitleScene.prototype.update = function(){
     this.logo.x = this.game.width*0.5 + Math.random()*10 - 5;
     this.logo.y = this.game.height*0.5 + Math.random()*10 - 5;
 
-    if (this.input.mousePointer.justReleased()){
+    if (this.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)){
         this.game.nextLevel();
     }
 };
