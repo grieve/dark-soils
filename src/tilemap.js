@@ -16,13 +16,13 @@ Tilemap.prototype.getTerrainAt = function(x, y){
         case 100:
             return 'water';
         case 132:
-            return 'gravel';
+            return 'mud';
         case 164:
-            return 'dirt';
+            return 'soil';
         case 196:
             return 'grass';
         case 228:
-            return 'stone';
+            return 'rock';
         default:
             return 'transition';
     }
