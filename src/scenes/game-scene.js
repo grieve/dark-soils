@@ -75,20 +75,21 @@ GameScene.prototype.create = function(){
 
 GameScene.prototype.init = function(config){
     this.config = config;
-    var map = new MapGen();
+
+    this.mapGen = new MapGen();
     var tileGen = new TileGen({
         game: this,
-        terrainTypes: map.terrainTypes,
+        terrainTypes: this.mapGen.terrainTypes,
         baseTile: 6,
         tileImg: 'mapgen-tileset',
         maskImg: 'masks'
     });
     tileGen.generate();
-    map.generate();
-    map.generateTileTransitions();
+    this.mapGen.generate();
+    this.mapGen.generateTileTransitions();
 
     this.game.cache._tilemaps['mapgen-map'] = {
-        data: map.exportCSV(),
+        data: this.mapGen.exportCSV(),
         format: 0,
         url: null
     };
@@ -103,6 +104,10 @@ GameScene.prototype.init = function(config){
     this.tilemap.map.addTilesetImage('tilegen-edges', 'tilegen-edges', 64, 64, 0, 0, 100);
 
     this.tilemap.map.setCollisionBetween(20,40);
+
+    console.log('get regions', this.mapGen.getRegions());
+    console.log('get grass terrain', this.mapGen.getTerrainIndexes('grass'));
+
 
     this.sprites = [];
 
