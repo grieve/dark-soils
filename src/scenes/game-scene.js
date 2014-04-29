@@ -156,6 +156,8 @@ GameScene.prototype.init = function(config){
     this.add.existing(this.argosGrave);
     this.graves.push(this.argosGrave.grave);
 
+    //test zombie
+    //this.spawnZombie(this.player);
 };
 
 GameScene.prototype.plantGraves = function(){
