@@ -99,10 +99,10 @@ MapGen.prototype.getRegions = function() {
     for(var i = 0; i < this.regions.length; i++) {
         var r = this.regions[i];
         rs.push({
-            x: r.x,
-            y: r.y,
-            width: r.w,
-            height: r.h
+            x: r.x + 1,
+            y: r.y + 1,
+            width: r.w - 1,
+            height: r.h - 1
         });
     }
     return rs;

@@ -241,7 +241,7 @@ GameScene.prototype.update = function(){
     this.physics.arcade.collide(this.argosGrave.headstone, this.zombies);
     this.physics.arcade.collide(this.player, this.enemy, this.enemyAttack, null, this);
     this.physics.arcade.collide(this.player, this.zombies, this.enemyAttack, null, this);
-    this.physics.arcade.collide(this.player, this.tilemap.layer, function() { console.log('collided'); }, null, this);
+    this.physics.arcade.collide(this.player, this.tilemap.layer);
 
     this.player.update();
     if(this.enemy) this.enemy.update();
