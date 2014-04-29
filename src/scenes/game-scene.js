@@ -105,17 +105,13 @@ GameScene.prototype.init = function(config){
 
     this.tilemap.map.setCollisionBetween(20,40);
 
-    console.log('get regions', this.mapGen.getRegions());
-    console.log('get grass terrain', this.mapGen.getTerrainIndexes('grass'));
-
-
     this.sprites = [];
 
+    var grassTiles = this.mapGen.getTerrainIndexes('grass');
+    var playerStart = grassTiles[Math.floor(Math.random()*grassTiles.length)]; 
+
     this.player = new Actors.Player(this);
-    this.player.setPosition(
-        this.world.centerX,
-        this.world.centerY
-    );
+    this.player.setPosition(playerStart.x * 64, playerStart.y * 64);
     this.add.existing(this.player);
     this.camera.focusOn(this.player);
     this.camera.follow(this.player, Phaser.Camera.FOLLOW_TOPDOWN);
@@ -166,20 +162,32 @@ GameScene.prototype.init = function(config){
 };
 
 GameScene.prototype.plantGraves = function(){
+    var rooms = this.mapGen.getRegions();
+    var perRoom = 2;
+
     var grave;
-    for (var type in this.config.graves){
-        for (var idx = 0; idx < this.config.graves[type]; idx++){
+
+    for (var rdx = 0; rdx < rooms.length; rdx++){
+        var r = rooms[rdx];
+        console.log(r);
+        for (var pdx = 0; pdx < perRoom; pdx++){
+            console.log('grave');
             grave = new Environment.Grave(
                 this,
-                Math.random() * this.world.width,
-                Math.random() * this.world.height,
-                type
+                (2 + r.x + Math.random() * (r.width - 4)) * 64,
+                (2 + r.y + Math.random() * (r.height - 5)) * 64,
+                this.expectation(this.config.graves)
             );
             this.graves.push(grave.grave);
             this.headstones.push(grave.headstone);
             this.sprites.push(grave);
             this.add.existing(grave);
         }
+    }
+
+    function compareGraves(a, b){
+        if(a != b) a.destroy();
+        console.log(b);
     }
 
     console.log(this.graves.length + " graves planted");
