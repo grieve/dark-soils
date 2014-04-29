@@ -223,8 +223,8 @@ MapGen.prototype.generateAreas = function() {
         recursionsLeft--;
 
         var level = 'level' + (MAX_RECURSIONS - recursionsLeft);
-        regions[level].push(parentNode.childNodes[0]);
-        regions[level].push(parentNode.childNodes[1]);
+        //regions[level].push(parentNode.childNodes[0]);
+        //regions[level].push(parentNode.childNodes[1]);
 
         push_regions(parentNode.childNodes[0], recursionsLeft);
         push_regions(parentNode.childNodes[1], recursionsLeft);
