@@ -148,7 +148,7 @@ GameScene.prototype.init = function(config){
         this.narrative.playChapter('intro');
     }, this);
 
-    this.digCount = 10;
+    this.digCount = 0;
 
     //test zombie
     //this.spawnZombie(this.player);

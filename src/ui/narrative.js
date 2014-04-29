@@ -9,13 +9,13 @@ var Narrative = function(scene){
     this.currentChapter = null;
 
     this.style = {
-        font: "16px Chewy",
+        font: "18px Chewy",
         fill: "#cca",
         stroke: "#000",
         strokeThickness: 1,
         align: "center",
         wordWrap: true,
-        wordWrapWidth: 250
+        wordWrapWidth: 300
     };
 };
 
