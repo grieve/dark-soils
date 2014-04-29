@@ -150,13 +150,6 @@ GameScene.prototype.init = function(config){
 
     this.digCount = 0;
 
-    // test argos
-
-    this.argosGrave = new Environment.DogGrave(this, this.player.x + 200, this.player.y);
-    this.sprites.push(this.argosGrave);
-    this.add.existing(this.argosGrave);
-    this.graves.push(this.argosGrave.grave);
-
     //test zombie
     //this.spawnZombie(this.player);
 };
@@ -165,9 +158,21 @@ GameScene.prototype.plantGraves = function(){
     var rooms = this.mapGen.getRegions();
     var perRoom = 2;
 
+    var argosRoom = Math.floor(Math.random()*rooms.length);
+
+    this.argosGrave = new Environment.DogGrave(
+        this, 
+        (rooms[argosRoom].x - 1 + rooms[argosRoom].width * 0.5) * 64,
+        (rooms[argosRoom].y - 2 + rooms[argosRoom].height * 0.5) * 64
+    );
+    this.sprites.push(this.argosGrave);
+    this.add.existing(this.argosGrave);
+    this.graves.push(this.argosGrave.grave);
+
     var grave;
 
     for (var rdx = 0; rdx < rooms.length; rdx++){
+        if (rdx == argosRoom) continue;
         var r = rooms[rdx];
         console.log(r);
         for (var pdx = 0; pdx < perRoom; pdx++){
@@ -185,10 +190,6 @@ GameScene.prototype.plantGraves = function(){
         }
     }
 
-    function compareGraves(a, b){
-        if(a != b) a.destroy();
-        console.log(b);
-    }
 
     console.log(this.graves.length + " graves planted");
 };
