@@ -6,7 +6,7 @@ var Enemy = function(scene){
     this.body.setSize(this.width*0.55, this.height*0.35, -this.width*0.1, this.height*0.2);
     this.scale.x = this.scale.y = this.baseScale = 0.6;
     this.anchor.setTo(0.5, 0.5);
-    this.normalSpeed = 50;
+    this.normalSpeed = 80;
     this.speed = 80;
 
     this.regions = scene.mapGen.getRegions();
@@ -19,6 +19,11 @@ var Enemy = function(scene){
     this.play('walk');
     this.scene = scene;
 
+    this.bloodEmitter = this.game.add.emitter(this.x, this.y, 2000);
+    this.bloodEmitter.setXSpeed(-100, 100);
+    this.bloodEmitter.setYSpeed(-100, 100);
+    this.bloodEmitter.gravity = 300;
+    this.bloodEmitter.makeParticles('blood-particle');
 };
 
 var rndInt = function (min, max) {
@@ -41,12 +46,20 @@ Enemy.prototype.update = function(){
     this.updateSpeed();
 };
 
+Enemy.prototype.onReorderZ = function(){
+    this.game.world.bringToTop(this.bloodEmitter);
+    this.bringToTop();
+};
+
 Enemy.prototype.teleport = function() {
 
     this.body.velocity.x = 0;
     this.body.velocity.y = 0;
 
     this.teleporting = true;
+    this.target.bloodEmitter.x = this.x;
+    this.target.bloodEmitter.y = this.y;
+    this.target.bloodEmitter.start(true, 300, null, 50);
 
     var tr = this.regions[rndInt(0, this.regions.length -1)];
     console.log('teleport', tr);

@@ -436,7 +436,7 @@ GameScene.prototype.openGrave = function(grave){
             break;
         case "argos":
             this.spawnArgos(grave.grp);
-            //this.narrative.playChapter('argos');
+            this.narrative.playChapter('argos');
             break;
         case "nothing":
             if(this.firstNothing){

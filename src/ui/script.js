@@ -95,6 +95,20 @@ module.exports = {
         	line: "Samuel wisely decides to run away"
         },
     ],
+    argos: [
+        {
+        	severity: 1, duration: 3000,
+        	line: "This odd creature seemed familiar"
+        },
+        {
+        	severity: 1, duration: 3000,
+        	line: "Samuel sensed an attachment, something that bound them together"
+        },
+        {
+        	severity: 1, duration: 3000,
+        	line: "Maybe he could be useful?"
+        },
+    ],
     nothing: [
         {
         	severity: 1, duration: 3000,
