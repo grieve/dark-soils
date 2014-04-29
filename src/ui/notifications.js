@@ -5,13 +5,13 @@ var Notifications = function(scene){
     this.scene = scene;
 
     this.style = {
-        font: "16px Chewy",
+        font: "18px Chewy",
         fill: "#cca",
         stroke: "#000",
         strokeThickness: 1,
         align: "center",
         wordWrap: true,
-        wordWrapWidth: 250
+        wordWrapWidth: 300
     };
 
     this.messages = [];

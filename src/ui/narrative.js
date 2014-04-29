@@ -9,13 +9,13 @@ var Narrative = function(scene){
     this.currentChapter = null;
 
     this.style = {
-        font: "16px Chewy",
+        font: "18px Chewy",
         fill: "#cca",
         stroke: "#000",
         strokeThickness: 1,
         align: "center",
         wordWrap: true,
-        wordWrapWidth: 250
+        wordWrapWidth: 300
     };
 };
 
@@ -32,7 +32,7 @@ Narrative.prototype.playChapter = function(name){
 
 Narrative.prototype.writeLine = function(){
     var script = this.currentChapter[this.currentLine++];
-    console.log(script);
+    if (!script) return;
     var insev = script.severity;
     var outsev = script.severity;
     if (this.currentLine == this.currentChapter.length){

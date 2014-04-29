@@ -105,17 +105,13 @@ GameScene.prototype.init = function(config){
 
     this.tilemap.map.setCollisionBetween(20,40);
 
-    console.log('get regions', this.mapGen.getRegions());
-    console.log('get grass terrain', this.mapGen.getTerrainIndexes('grass'));
-
-
     this.sprites = [];
 
+    var grassTiles = this.mapGen.getTerrainIndexes('grass');
+    var playerStart = grassTiles[Math.floor(Math.random()*grassTiles.length)]; 
+
     this.player = new Actors.Player(this);
-    this.player.setPosition(
-        this.world.centerX,
-        this.world.centerY
-    );
+    this.player.setPosition(playerStart.x * 64, playerStart.y * 64);
     this.add.existing(this.player);
     this.camera.focusOn(this.player);
     this.camera.follow(this.player, Phaser.Camera.FOLLOW_TOPDOWN);
@@ -154,26 +150,38 @@ GameScene.prototype.init = function(config){
 
     this.digCount = 0;
 
-    // test argos
-
-    this.argosGrave = new Environment.DogGrave(this, this.player.x + 200, this.player.y);
-    this.sprites.push(this.argosGrave);
-    this.add.existing(this.argosGrave);
-    this.graves.push(this.argosGrave.grave);
-
     //test zombie
     //this.spawnZombie(this.player);
 };
 
 GameScene.prototype.plantGraves = function(){
+    var rooms = this.mapGen.getRegions();
+    var perRoom = 2;
+
+    var argosRoom = Math.floor(Math.random()*rooms.length);
+
+    this.argosGrave = new Environment.DogGrave(
+        this, 
+        (rooms[argosRoom].x - 1 + rooms[argosRoom].width * 0.5) * 64,
+        (rooms[argosRoom].y - 2 + rooms[argosRoom].height * 0.5) * 64
+    );
+    this.sprites.push(this.argosGrave);
+    this.add.existing(this.argosGrave);
+    this.graves.push(this.argosGrave.grave);
+
     var grave;
-    for (var type in this.config.graves){
-        for (var idx = 0; idx < this.config.graves[type]; idx++){
+
+    for (var rdx = 0; rdx < rooms.length; rdx++){
+        if (rdx == argosRoom) continue;
+        var r = rooms[rdx];
+        console.log(r);
+        for (var pdx = 0; pdx < perRoom; pdx++){
+            console.log('grave');
             grave = new Environment.Grave(
                 this,
-                Math.random() * this.world.width,
-                Math.random() * this.world.height,
-                type
+                (2 + r.x + Math.random() * (r.width - 4)) * 64,
+                (2 + r.y + Math.random() * (r.height - 5)) * 64,
+                this.expectation(this.config.graves)
             );
             this.graves.push(grave.grave);
             this.headstones.push(grave.headstone);
@@ -181,6 +189,7 @@ GameScene.prototype.plantGraves = function(){
             this.add.existing(grave);
         }
     }
+
 
     console.log(this.graves.length + " graves planted");
 };
@@ -477,7 +486,7 @@ GameScene.prototype.spawnGroundskeeper = function(){
 GameScene.prototype.spawnZombie = function(grave){
     var zombie = new Actors.Zombie(this);
     zombie.setTarget(this.player);
-    zombie.setPosition(grave.x, grave.y + 100);
+    zombie.setPosition(grave.x + 70, grave.y + 100);
     this.sprites.push(zombie);
     this.zombies.push(zombie);
     this.add.existing(zombie);
@@ -486,13 +495,13 @@ GameScene.prototype.spawnZombie = function(grave){
 GameScene.prototype.spawnLostSoul = function(grave){
     var lostSoul = new Actors.LostSoul(this);
     lostSoul.setTarget(this.enemy);
-    lostSoul.setPosition(grave.x, grave.y + 100);
+    lostSoul.setPosition(grave.x + 70, grave.y + 100);
     this.sprites.push(lostSoul);
     this.add.existing(lostSoul);
 };
 
 GameScene.prototype.spawnHeart = function(grave){
-    this.spawnPowerup(grave.x, grave.y, 'Heart');
+    this.spawnPowerup(grave.x + 70, grave.y, 'Heart');
 };
 
 GameScene.prototype.spawnPowerup = function(x, y, type){

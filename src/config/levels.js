@@ -1,10 +1,10 @@
 module.exports = [
     {
         graves: {
-            heart: 10,
-            zombie: 2,
-            lostsoul: 3,
-            nothing: 3
+            heart: 8,
+            zombie: 4,
+            lostsoul: 2,
+            nothing: 2
         },
         treasures: {
             Bones: {

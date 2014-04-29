@@ -17,7 +17,7 @@ var assets = {
         ['player_dead', 'img/protagonist_dead.png', 151, 151],
         ['enemy', 'img/villain_walk.png', 144, 180],
         ['zombie', 'img/zombie_anim.png', 180, 180],
-        ['lost-soul', 'img/lost-soul.png', 120, 160],
+        ['lost-soul', 'img/lostsoul.png', 160, 160],
         ['grave', 'img/grave.png', 195, 319],
         ['dog-grave', 'img/dog-grave.png', 160, 300],
         ['heart', 'img/heart.png', 78, 99],

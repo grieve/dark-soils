@@ -7,7 +7,7 @@ var LostSoul = function(scene){
     this.anchor.setTo(0.5, 0.5);
     this.speed = 120;
 
-    this.animations.add('waft', [0, 1, 2, 3], 8, true);
+    this.animations.add('waft', [0, 0, 0, 0, 1, 2, 3, 4, 4, 4, 4, 5, 6, 7, 8], 8, false);
     this.play('waft');
 };
 
