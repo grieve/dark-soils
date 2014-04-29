@@ -7,12 +7,22 @@ var Enemy = function(scene){
     this.scale.x = this.scale.y = this.baseScale = 0.6;
     this.anchor.setTo(0.5, 0.5);
     this.normalSpeed = 50;
-    this.speed = 50;
+    this.speed = 80;
+
+    this.regions = scene.mapGen.getRegions();
+    this.tileSize = scene.mapGen.tileSize;
+
+    this.teleporting = false;
 
     this.animations.add('walk', [0, 1, 2, 3, 4, 5], 8, true);
     this.animations.add('stab', [1, 0, 0, 0, 6, 6, 0, 1], 10, false);
     this.play('walk');
     this.scene = scene;
+
+};
+
+var rndInt = function (min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
 Enemy.prototype = Object.create(Phaser.Sprite.prototype);
@@ -29,6 +39,28 @@ Enemy.prototype.setTarget = function(obj){
 
 Enemy.prototype.update = function(){
     this.updateSpeed();
+};
+
+Enemy.prototype.teleport = function() {
+
+    this.body.velocity.x = 0;
+    this.body.velocity.y = 0;
+
+    this.teleporting = true;
+
+    var tr = this.regions[rndInt(0, this.regions.length -1)];
+    console.log('teleport', tr);
+
+    var landings = [
+        { x: tr.x, y: tr.y },
+        { x: tr.x + tr.width - 1, y: tr.y },
+        { x: tr.x, y: tr.y + tr.height - 1 },
+        { x: tr.x + tr.width - 1, y: tr.y + tr.height - 1 }
+    ];
+    var tl = landings[rndInt(0, 3)];
+    this.setPosition((tl.x + 0.5) * this.tileSize, (tl.y + 0.5) * this.tileSize );
+    this.teleporting = false;
+
 };
 
 Enemy.prototype.attack = function(target){
@@ -49,6 +81,9 @@ Enemy.prototype.attack = function(target){
 };
 
 Enemy.prototype.updateSpeed = function(){
+
+    if (this.teleporting) return;
+
     if (this.attacking){
         this.body.velocity.x = 0;
         this.body.velocity.y = 0;
